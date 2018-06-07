@@ -17,6 +17,7 @@ namespace ServiceHub.Room.Library
         [StringLength(255)]
         public string Address1 { get; set; }
         //<summary> Apt/Room number for this address if applicable. </summary>
+        [StringLength(255)]
         public string Address2 { get; set; }
         //<summary> Name of the city for this address. </summary>
         [Required]
