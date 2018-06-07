@@ -20,7 +20,7 @@ namespace ServiceHub.Room.Library
         public int Vacancy { get; set; }
         //<summary> Total number of beds in this room weather assigned or not</summary>
         public int Occupancy { get; set; }
-        //<summary> Biological birth sex that this room accomidates.
+        //<summary> Trigger Warning: Biological birth sex that this room accommodates.
         // Usage: 'M' or 'F'. Mutually exclusive.
         //</summary>
         public char Gender { get; set; }
