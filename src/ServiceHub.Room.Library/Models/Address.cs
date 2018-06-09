@@ -24,6 +24,7 @@ namespace ServiceHub.Room.Library
         //<summary> Name of the country for this address. </summary>
         public string Country { get; set; }
 
+        //<summary> Method for checking if state of model is valid </summary>
         public bool isValidState(Address model)
         {
             if (AddressId == System.Guid.Empty) { return false; }
