@@ -5,8 +5,10 @@ using System.Text;
 
 namespace ServiceHub.Room.Context.Repository
 {
-    public class RoomsRepository: IRoomsRepository
+    public class RoomRepositoryMemory:IRoomsRepository
     {
+        public List<Models.Room> roomList = new List<Models.Room>();
+
         public void Insert(Models.Room room)
         {
             throw new NotImplementedException();
@@ -19,7 +21,8 @@ namespace ServiceHub.Room.Context.Repository
 
         public Models.Room GetById(Guid id)
         {
-            throw new NotImplementedException();
+            Models.Room room = roomList.Find(x => x.RoomId == id);
+            return room;
         }
 
         public void Update(Models.Room room)

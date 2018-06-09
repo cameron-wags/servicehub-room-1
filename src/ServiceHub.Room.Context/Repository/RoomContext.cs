@@ -19,7 +19,7 @@ namespace ServiceHub.Room.Context.Repository
             _roomRepository.Insert(room);
         }
 
-        public IQueryable<Models.Room> Get()
+        public List<Models.Room> Get()
         {
             return _roomRepository.Get();
         }
