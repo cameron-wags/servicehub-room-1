@@ -26,6 +26,7 @@ namespace ServiceHub.Room.Library
         //<summary> Sex that this room accommodates. </summary>\
         public GenderEnum? Gender { get; set; }
 
+        //<summary> Method for checking if state of model is valid </summary>
         public bool isValidState(Room model)
         {
             if (RoomId == System.Guid.Empty) { return false; }
