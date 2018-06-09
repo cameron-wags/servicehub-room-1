@@ -13,5 +13,9 @@ namespace ServiceHub.Room.Context.Utilities
         public static Library.Room ContextToLibrary(Models.Room contextRoom) {
             throw new NotImplementedException();
         }
+
+        public static List<Library.Room> ContextToLibrary(List<Models.Room> contextRooms) {
+            throw new NotImplementedException();
+        }
     }
 }
