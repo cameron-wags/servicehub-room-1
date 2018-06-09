@@ -9,6 +9,7 @@ namespace ServiceHub.Room.Service.Controllers
   [Route("api/[controller]")]
   public class RoomController : BaseController
   {
+        public ServiceHub.Room.Context.Repository.IRoomsRepository repo = new ServiceHub.Room.Context.Repository.RoomsRepository();
     public RoomController(ILoggerFactory loggerFactory, IQueueClient queueClientSingleton)
       : base(loggerFactory, queueClientSingleton) {}
 
@@ -18,9 +19,9 @@ namespace ServiceHub.Room.Service.Controllers
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> Get(int id)
+    public async Task<IActionResult> Get(Guid id)
     {
-            var myTask = Task.Run(() => /*call Data Accesss*/);
+            var myTask = Task.Run(() => repo.GetById(id)); //needs new get overload that takes id
             ServiceHub.Room.Library.Room result = await myTask;
             return result;
             
