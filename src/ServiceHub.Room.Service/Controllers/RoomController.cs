@@ -3,12 +3,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
+using ServiceHub.Room.Context.Repository;
 
 namespace ServiceHub.Room.Service.Controllers
 {
+   
   [Route("api/[controller]")]
   public class RoomController : BaseController
   {
+      private IRoomsRepository _context;
     public RoomController(ILoggerFactory loggerFactory, IQueueClient queueClientSingleton)
       : base(loggerFactory, queueClientSingleton) {}
 
