@@ -20,7 +20,10 @@ namespace ServiceHub.Room.Service.Controllers
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
     {
-      return await Task.Run(() => Ok());
+            var myTask = Task.Run(() => /*call Data Accesss*/);
+            ServiceHub.Room.Library.Room result = await myTask;
+            return result;
+            
     }
 
     [HttpPost]
