@@ -11,12 +11,12 @@ namespace ServiceHub.Room.Context.Repository
 
         public void Insert(Models.Room room)
         {
-            throw new NotImplementedException();
+            roomList.Add(room);
         }
 
         public List<Models.Room> Get()
         {
-            throw new NotImplementedException();
+            return roomList;
         }
 
         public Models.Room GetById(Guid id)
@@ -27,12 +27,14 @@ namespace ServiceHub.Room.Context.Repository
 
         public void Update(Models.Room room)
         {
-            throw new NotImplementedException();
+            int index = roomList.IndexOf(room);
+            if (index >= 0)
+            roomList[index] = room;
         }
 
         public void Delete(Guid id)
         {
-            throw new NotImplementedException();
+            roomList.Remove(roomList.Find(x => x.RoomId == id));
         }
     }
 }
