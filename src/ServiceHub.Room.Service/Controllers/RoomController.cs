@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
 using ServiceHub.Room.Context.Repository;
+using ServiceHub.Room.Library;
 
 namespace ServiceHub.Room.Service.Controllers
 {
@@ -17,20 +19,32 @@ namespace ServiceHub.Room.Service.Controllers
 
     public async Task<IActionResult> Get()
     {
-      return await Task.Run(() => Ok());
-    }
+            //return await Task.Run(() => Ok());
+        var myTask = Task.Run(() => _context.Get());
+        List<Context.Models.Room> result = await myTask;
+
+        return Ok(result);
+        }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> Get(int id)
+    public async Task<IActionResult> Get(Guid id)
     {
-      return await Task.Run(() => Ok());
-    }
+            //return await Task.Run(() => Ok());
+        var myTask = Task.Run(() => _context.GetById(id));
+        Context.Models.Room result = await myTask;
+
+        return Ok(result);
+        }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody]object value)
+    public async Task<IActionResult> Post([FromBody]Library.Room value)
     {
-      return await Task.Run(() => Ok());
-    }
+            //return await Task.Run(() => Ok());
+        var myTask = Task.Run(() => _context.Insert(value));
+        Library.Room result = await myTask;
+
+        return Ok(result);
+        }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody]object value)
