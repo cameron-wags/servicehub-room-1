@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
 using ServiceHub.Room.Context.Repository;
+using ServiceHub.Room.Context.Utilities;
+
 using ServiceHub.Room.Library;
 
 namespace ServiceHub.Room.Service.Controllers
@@ -40,23 +42,39 @@ namespace ServiceHub.Room.Service.Controllers
     public async Task<IActionResult> Post([FromBody]Library.Room value)
     {
             //return await Task.Run(() => Ok());
-        var myTask = Task.Run(() => _context.Insert(value));
-        Library.Room result = await myTask;
-
-        return Ok(result);
+        if (!value.isValidState(value))
+        {
+            return BadRequest();
         }
 
+        Context.Models.Room room = ModelMapper.LibraryToContext(value);
+        var myTask = Task.Run(() => _context.Insert(room));
+        await myTask;
+
+        return StatusCode(201);
+    }
+
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody]object value)
+    public async Task<IActionResult> Put(int id, [FromBody]Library.Room value)
     {
-      return await Task.Run(() => Ok());
+        Context.Models.Room room = ModelMapper.LibraryToContext(value);
+        var myTask = Task.Run(() => _context.Update(room));
+        await myTask;
+
+        //return CreatedAtRoute("api/Room", new { Id = room.RoomId }, value);
+        return StatusCode(203);
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(Guid id)
     {
-      return await Task.Run(() => Ok());
-    }
+        var myTask = Task.Run(() => _context.Delete(id));
+        await myTask;
+
+   
+        return StatusCode(203);
+
+        }
 
     protected override void UseReceiver()
     {
