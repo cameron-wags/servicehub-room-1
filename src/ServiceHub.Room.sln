@@ -73,6 +73,10 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
+<<<<<<< HEAD
 		SolutionGuid = {4123CD28-8E82-43BD-B38A-4437EA0F075A}
+=======
+		SolutionGuid = {6F384A00-0B20-446B-91FE-99464E6E7E1B}
+>>>>>>> room-lib
 	EndGlobalSection
 EndGlobal

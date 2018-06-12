@@ -1,54 +1,67 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 
-namespace ServiceHub.Room.Library
+namespace ServiceHub.Room.Library.Models
 {
-    //<summary> Room model. </summary>
+    ///<summary> Room model. </summary>
+    ///<remarks>This model is for the library and has validation.</remarks>
+    [DataContract]
     public class Room
     {
-        //<summary> Key. Used to uniquely identify this Room model. </summary>
+        [IgnoreDataMember]
+        private static readonly string[] Genders = { "M", "F", "MALE", "FEMALE", "" };
 
+        ///<summary> Key. Used to uniquely identify this Room model. </summary>
+        [DataMember]
         public Guid RoomId { get; set; }
-        //<summary> Name of the training location where this room is
-        //located.  Example: "Reston", "Tampa" or, "Dallas".
-        //</summary>
-        [StringLength(255)]
+
+        ///<summary> Name of the training location where this room is
+        ///located.  Example: "Reston", "Tampa" or, "Dallas".
+        ///</summary>
+        [DataMember]
         public string Location { get; set; }
-        //<summary> This Address model for this room. </summary>
+
+        ///<summary> This Address model for this room. </summary>
+        [DataMember]
         public Address Address { get; set; }
-        //<summary> Number of unassigned beds in this room. </summary>
+
+        ///<summary> Number of unassigned beds in this room. </summary>
+        [DataMember]
         public int? Vacancy { get; set; }
-        //<summary> Total number of beds in this room weather assigned or not</summary>
+
+        ///<summary> Total number of beds in this room weather assigned or not</summary>
+        [DataMember]
         public int? Occupancy { get; set; }
-        //<summary> Sex that this room accommodates. </summary>\
-        public GenderEnum? Gender { get; set; }
 
-        //<summary> Method for checking if state of model is valid </summary>
-        public bool isValidState(Room model)
-        {
-            if (RoomId == System.Guid.Empty) { return false; }
-            if (Location == null || Location.Length > 255) { return false; }
-            if (Address == null || !Address.isValidState(this.Address)) { return false; }
-            if (Vacancy == null || Vacancy > Occupancy) { return false; }
-            if (Occupancy == null || Occupancy <= 0) { return false; }
-            if (Gender == null) { return false; }
+        ///<summary> Sex that this room accommodates. </summary>
+        [DataMember]
+        public string Gender { get; set; }
 
-            return true;
-
+        /// <summary>
+        /// Initialize a Room with invalid properties.
+        /// </summary>
+        public Room() {
+            RoomId = Guid.Empty;
+            Location = null;
+            Address = null;
+            Vacancy = null;
+            Occupancy = null;
+            Gender = null;
         }
-    }
 
-    [DataContract(Name = "Gender")]
-    public enum GenderEnum
-    {
-        [EnumMember]
-        Male,
-        [EnumMember]
-        Female
-
-
+        ///<summary> Checks if state of model is valid </summary>
+        /// <returns>True if the model is valid, false otherwise.</returns>
+        public bool isValidState()
+        {
+            if (RoomId == Guid.Empty) { return false; }
+            if (String.IsNullOrEmpty(Location) || Location?.Length > 255 || Location?.Length <= 0) { return false; }
+            if (Address == null || !Address.isValidState()) { return false; }
+            if (Occupancy == null || Occupancy <= 0) { return false; }
+            if (Vacancy == null || Vacancy > Occupancy || Vacancy < 0) { return false; }
+            if (Gender == null || !Genders.Contains(Gender.ToUpper())) { return false; }
+            
+            return true;
+        }
     }
 }
