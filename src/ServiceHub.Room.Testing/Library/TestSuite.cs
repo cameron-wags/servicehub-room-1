@@ -1,11 +1,7 @@
 using System;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using ServiceHub.Room.Library;
+using ServiceHub.Room.Library.Models;
 using Xunit;
+
 namespace ServiceHub.Room.Testing.Library
 {
     public class TestSuite
@@ -14,7 +10,7 @@ namespace ServiceHub.Room.Testing.Library
         public void TestRoomValidationAll()
         {
             //Arrange
-            Room.Library.Room room = new Room.Library.Room();
+            Room.Library.Models.Room room = new Room.Library.Models.Room();
 
             //Act
             //var validationResults = new List<ValidationResult>();
@@ -22,7 +18,7 @@ namespace ServiceHub.Room.Testing.Library
 
             // Assert
             //Assert.False(actual);
-            Assert.False(room.isValidState(room));
+            Assert.False(room.isValidState());
         }
 
         [Fact]
@@ -36,19 +32,19 @@ namespace ServiceHub.Room.Testing.Library
                 Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 City = "Tampa",
-                Country = "USA",
+                Country = "US",
                 PostalCode = "92646",
                 State = "Ca"
             };
 
-            var room = new Room.Library.Room
+            var room = new Room.Library.Models.Room
             {
                 //RoomId = new Guid(),
                 RoomId = Guid.NewGuid(),
                 Address = address,
                 Vacancy = 1,
                 Occupancy = 2,
-                Gender = GenderEnum.Male
+                Gender = ""
             };
 
             //Act
@@ -57,7 +53,7 @@ namespace ServiceHub.Room.Testing.Library
 
             //Assert
             //Assert.False(actual);
-            Assert.False(room.isValidState(room));
+            Assert.False(room.isValidState());
         }
 
         [Fact]
@@ -72,12 +68,12 @@ namespace ServiceHub.Room.Testing.Library
                 Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 City = "Tampa",
-                Country = "USA",
+                Country = "US",
                 PostalCode = "92646",
                 State = "Ca"
             };
 
-            var room = new Room.Library.Room
+            var room = new Room.Library.Models.Room
             {
                 //RoomId = new Guid(),
                 RoomId = Guid.NewGuid(),
@@ -85,7 +81,7 @@ namespace ServiceHub.Room.Testing.Library
                 Address = address,
                 Vacancy = 1,
                 Occupancy = 2,
-                Gender = GenderEnum.Male
+                Gender = ""
             };
 
             //Act
@@ -94,14 +90,14 @@ namespace ServiceHub.Room.Testing.Library
 
             //Assert
             //Assert.False(!actual);
-            Assert.True(room.isValidState(room));
+            Assert.True(room.isValidState());
         }
 
         [Fact]
         public void TestRoomValidationNoAddress()
 
         {
-            var room = new Room.Library.Room
+            var room = new Room.Library.Models.Room
             {
                 //RoomId = new Guid(),
                 RoomId = Guid.NewGuid(),
@@ -109,7 +105,7 @@ namespace ServiceHub.Room.Testing.Library
                 //Address = address,
                 Vacancy = 1,
                 Occupancy = 2,
-                Gender = GenderEnum.Male
+                Gender = ""
             };
 
             //Act
@@ -118,7 +114,7 @@ namespace ServiceHub.Room.Testing.Library
 
             //Assert
             //Assert.False(actual);
-            Assert.False(room.isValidState(room));
+            Assert.False(room.isValidState());
         }
 
         [Fact]
@@ -133,12 +129,12 @@ namespace ServiceHub.Room.Testing.Library
                 //Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 City = "Tampa",
-                Country = "USA",
+                Country = "US",
                 PostalCode = "92646",
                 State = "Ca"
             };
 
-            var room = new Room.Library.Room
+            var room = new Room.Library.Models.Room
             {
                 //RoomId = new Guid(),
                 RoomId = Guid.NewGuid(),
@@ -146,10 +142,10 @@ namespace ServiceHub.Room.Testing.Library
                 Address = address,
                 Vacancy = 1,
                 Occupancy = 2,
-                Gender = GenderEnum.Male
+                Gender = ""
             };
 
-            Assert.False(room.isValidState(room));
+            Assert.False(room.isValidState());
         }
 
         [Fact]
@@ -164,12 +160,12 @@ namespace ServiceHub.Room.Testing.Library
                 Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 //City = "Tampa",
-                Country = "USA",
+                Country = "US",
                 PostalCode = "92646",
                 State = "Ca"
             };
 
-            var room = new Room.Library.Room
+            var room = new Room.Library.Models.Room
             {
                 //RoomId = new Guid(),
                 RoomId = Guid.NewGuid(),
@@ -177,10 +173,10 @@ namespace ServiceHub.Room.Testing.Library
                 Address = address,
                 Vacancy = 1,
                 Occupancy = 2,
-                Gender = GenderEnum.Male
+                Gender = ""
             };
 
-            Assert.False(room.isValidState(room));
+            Assert.False(room.isValidState());
         }
 
         [Fact]
@@ -195,12 +191,12 @@ namespace ServiceHub.Room.Testing.Library
                 Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 City = "Tampa",
-                Country = "USA",
+                Country = "US",
                 PostalCode = "92646",
                 State = "Ca"
             };
 
-            var room = new Room.Library.Room
+            var room = new Room.Library.Models.Room
             {
                 //RoomId = new Guid(),
                 RoomId = Guid.NewGuid(),
@@ -208,7 +204,7 @@ namespace ServiceHub.Room.Testing.Library
                 Address = address,
                 //Vacancy = 1,
                 Occupancy = 2,
-                Gender = GenderEnum.Male
+                Gender = ""
             };
 
             //Act
@@ -217,7 +213,7 @@ namespace ServiceHub.Room.Testing.Library
 
             //Assert
             //Assert.False(actual);
-            Assert.False(room.isValidState(room));
+            Assert.False(room.isValidState());
         }
 
         [Fact]
@@ -232,12 +228,12 @@ namespace ServiceHub.Room.Testing.Library
                 Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 City = "Tampa",
-                Country = "USA",
+                Country = "US",
                 PostalCode = "92646",
                 State = "Ca"
             };
 
-            var room = new Room.Library.Room
+            var room = new Room.Library.Models.Room
             {
                 //RoomId = new Guid(),
                 RoomId = Guid.NewGuid(),
@@ -245,10 +241,10 @@ namespace ServiceHub.Room.Testing.Library
                 Address = address,
                 Vacancy = 3,
                 Occupancy = 2,
-                Gender = GenderEnum.Male
+                Gender = ""
             };
 
-            Assert.False(room.isValidState(room));
+            Assert.False(room.isValidState());
         }
 
         [Fact]
@@ -263,12 +259,12 @@ namespace ServiceHub.Room.Testing.Library
                 Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 City = "Tampa",
-                Country = "USA",
+                Country = "US",
                 PostalCode = "92646",
                 State = "Ca"
             };
 
-            var room = new Room.Library.Room
+            var room = new Room.Library.Models.Room
             {
                 //RoomId = new Guid(),
                 RoomId = Guid.NewGuid(),
@@ -276,7 +272,7 @@ namespace ServiceHub.Room.Testing.Library
                 Address = address,
                 Vacancy = 1,
                 //Occupancy = 2,
-                Gender = GenderEnum.Male
+                Gender = ""
             };
 
             //Act
@@ -285,7 +281,7 @@ namespace ServiceHub.Room.Testing.Library
 
             //Assert
             //Assert.False(actual);
-            Assert.False(room.isValidState(room));
+            Assert.False(room.isValidState());
         }
 
         [Fact]
@@ -300,12 +296,12 @@ namespace ServiceHub.Room.Testing.Library
                 Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 City = "Tampa",
-                Country = "USA",
+                Country = "US",
                 PostalCode = "92646",
                 State = "Ca"
             };
 
-            var room = new Room.Library.Room
+            var room = new Room.Library.Models.Room
             {
                 //RoomId = new Guid(),
                 RoomId = Guid.NewGuid(),
@@ -313,14 +309,14 @@ namespace ServiceHub.Room.Testing.Library
                 Address = address,
                 Vacancy = 0,
                 Occupancy = 0,
-                Gender = GenderEnum.Male
+                Gender = ""
             };
 
 
 
 
             //Assert
-            Assert.False(room.isValidState(room));
+            Assert.False(room.isValidState());
         }
 
         [Fact]
@@ -335,12 +331,12 @@ namespace ServiceHub.Room.Testing.Library
                 Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 City = "Tampa",
-                Country = "USA",
+                Country = "US",
                 PostalCode = "92646",
                 State = "Ca"
             };
 
-            var room = new Room.Library.Room
+            var room = new Room.Library.Models.Room
             {
                 //RoomId = new Guid(),
                 RoomId = Guid.NewGuid(),
@@ -357,7 +353,7 @@ namespace ServiceHub.Room.Testing.Library
 
             //Assert
             //Assert.False(actual);
-            Assert.False(room.isValidState(room));
+            Assert.False(room.isValidState());
         }
 
         [Fact]
@@ -372,12 +368,12 @@ namespace ServiceHub.Room.Testing.Library
                 Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 City = "Tampa",
-                Country = "USA",
+                Country = "US",
                 PostalCode = "92646",
                 State = "Ca"
             };
 
-            var room = new Room.Library.Room
+            var room = new Room.Library.Models.Room
             {
                 //RoomId = new Guid(),
                 RoomId = Guid.NewGuid(),
@@ -388,7 +384,7 @@ namespace ServiceHub.Room.Testing.Library
                 Address = address,
                 Vacancy = 1,
                 Occupancy = 2,
-                Gender = GenderEnum.Male
+                Gender = ""
             };
 
             //Act
@@ -397,7 +393,7 @@ namespace ServiceHub.Room.Testing.Library
 
             //Assert
             //Assert.False(actual);
-            Assert.False(room.isValidState(room));
+            Assert.False(room.isValidState());
         }
 
         [Fact]
@@ -413,7 +409,7 @@ namespace ServiceHub.Room.Testing.Library
 
             //Assert
             //Assert.False(actual);
-            Assert.False(address.isValidState(address));
+            Assert.False(address.isValidState());
         }
 
         [Fact]
@@ -427,7 +423,7 @@ namespace ServiceHub.Room.Testing.Library
                 Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 City = "Tampa",
-                Country = "USA",
+                Country = "US",
                 PostalCode = "92646",
                 State = "Ca"
             };
@@ -438,7 +434,7 @@ namespace ServiceHub.Room.Testing.Library
 
             //Assert
             //Assert.False(actual);
-            Assert.False(address.isValidState(address));
+            Assert.False(address.isValidState());
         }
 
         [Fact]
@@ -452,7 +448,7 @@ namespace ServiceHub.Room.Testing.Library
                 //Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 City = "Tampa",
-                Country = "USA",
+                Country = "US",
                 PostalCode = "92646",
                 State = "Ca"
             };
@@ -474,7 +470,7 @@ namespace ServiceHub.Room.Testing.Library
             ////Assert
             //Assert.False(actual);
             //Assert.Contains("Address1 field is required", reason);
-            Assert.False(address.isValidState(address));
+            Assert.False(address.isValidState());
         }
         [Fact]
         public void TestAddressValidationAddress2()
@@ -487,14 +483,14 @@ namespace ServiceHub.Room.Testing.Library
                 Address1 = "1234 Test st.",
                 //Address2 = "apt 303",
                 City = "Tampa",
-                Country = "USA",
+                Country = "US",
                 PostalCode = "92646",
                 State = "Ca"
             };
 
             //Act & Assert
 
-            Assert.False(address.isValidState(address));
+            Assert.True(address.isValidState());
         }
         [Fact]
         public void TestAddressValidationCity()
@@ -507,14 +503,14 @@ namespace ServiceHub.Room.Testing.Library
                 Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 //City = "Tampa",
-                Country = "USA",
+                Country = "US",
                 PostalCode = "92646",
                 State = "Ca"
             };
 
             //Act & Assert
 
-            Assert.False(address.isValidState(address));
+            Assert.False(address.isValidState());
         }
         [Fact]
         public void TestAddressValidationState()
@@ -527,14 +523,14 @@ namespace ServiceHub.Room.Testing.Library
                 Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 City = "Tampa",
-                Country = "USA",
+                Country = "US",
                 PostalCode = "92646",
                 //State = "Ca"
             };
 
             //Act & Assert
 
-            Assert.False(address.isValidState(address));
+            Assert.False(address.isValidState());
         }
 
         [Fact]
@@ -548,14 +544,14 @@ namespace ServiceHub.Room.Testing.Library
                 Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 City = "Tampa",
-                Country = "USA",
+                Country = "US",
                 PostalCode = "92646",
                 State = "Cal"
             };
 
             //Act & Assert
 
-            Assert.False(address.isValidState(address));
+            Assert.False(address.isValidState());
         }
 
         [Fact]
@@ -569,14 +565,14 @@ namespace ServiceHub.Room.Testing.Library
                 Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 City = "Tampa",
-                Country = "USA",
+                Country = "US",
                 PostalCode = "92646",
                 State = "C"
             };
 
             //Act & Assert
 
-            Assert.False(address.isValidState(address));
+            Assert.False(address.isValidState());
         }
 
         [Fact]
@@ -590,14 +586,14 @@ namespace ServiceHub.Room.Testing.Library
                 Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 City = "Tampa",
-                Country = "USA",
+                Country = "US",
                 //PostalCode = "92646",
                 State = "Ca"
             };
 
             //Act & Assert
 
-            Assert.False(address.isValidState(address));
+            Assert.False(address.isValidState());
         }
 
         [Fact]
@@ -611,14 +607,14 @@ namespace ServiceHub.Room.Testing.Library
                 Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 City = "Tampa",
-                Country = "USA",
+                Country = "US",
                 PostalCode = "926464",
                 State = "Ca"
             };
 
             //Act & Assert
 
-            Assert.False(address.isValidState(address));
+            Assert.False(address.isValidState());
         }
 
         [Fact]
@@ -632,14 +628,14 @@ namespace ServiceHub.Room.Testing.Library
                 Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 City = "Tampa",
-                Country = "USA",
+                Country = "US",
                 PostalCode = "9264",
                 State = "Ca"
             };
 
             //Act & Assert
 
-            Assert.False(address.isValidState(address));
+            Assert.False(address.isValidState());
         }
 
         [Fact]
@@ -653,14 +649,14 @@ namespace ServiceHub.Room.Testing.Library
                 Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 City = "Tampa",
-                //Country = "USA",
+                //Country = "US",
                 PostalCode = "92646",
                 State = "Ca"
             };
 
             //Act & Assert
 
-            Assert.False(address.isValidState(address));
+            Assert.False(address.isValidState());
         }
 
         [Fact]
@@ -674,14 +670,14 @@ namespace ServiceHub.Room.Testing.Library
                 Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 City = "Tampa",
-                Country = "USAa",
+                Country = "USa",
                 PostalCode = "92646",
                 State = "Ca"
             };
 
             //Act & Assert
 
-            Assert.False(address.isValidState(address));
+            Assert.False(address.isValidState());
         }
 
         [Fact]
@@ -695,14 +691,14 @@ namespace ServiceHub.Room.Testing.Library
                 Address1 = "1234 Test st.",
                 Address2 = "apt 303",
                 City = "Tampa",
-                Country = "US",
+                Country = "U",
                 PostalCode = "92646",
                 State = "Ca"
             };
 
             //Act & Assert
 
-            Assert.False(address.isValidState(address));
+            Assert.False(address.isValidState());
         }
 
     }
