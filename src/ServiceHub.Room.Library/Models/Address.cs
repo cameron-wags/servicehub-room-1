@@ -9,6 +9,12 @@ namespace ServiceHub.Room.Library.Models
     [DataContract]
     public class Address {
 
+        /// <summary>
+        /// List of all valid state codes.
+        /// </summary>
+        /// <remarks>
+        /// Values are uppercase for case insensitivity.
+        /// </remarks>
         [IgnoreDataMember]
         private static readonly string[] StateCodes = {
             "AL", "AK", "AZ", "AR", "CA",
@@ -23,6 +29,12 @@ namespace ServiceHub.Room.Library.Models
             "VA", "WA", "WV", "WI", "WY"
         };
 
+        /// <summary>
+        /// List of all valid country codes.
+        /// </summary>
+        /// <remarks>
+        /// Values are uppercase for case insensitivity.
+        /// </remarks>
         [IgnoreDataMember]
         private static readonly string[] CountryCodes = { "US" };
 
