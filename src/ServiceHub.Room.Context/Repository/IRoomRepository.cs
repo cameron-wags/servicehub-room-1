@@ -9,7 +9,7 @@ namespace ServiceHub.Room.Context.Repository
     {
 
         void Insert(Models.Room room);
-        IQueryable<Models.Room> Get();
+        List<Models.Room> Get();
         Models.Room GetById(Guid id);
         void Update(Models.Room room);
         void Delete(Guid id);

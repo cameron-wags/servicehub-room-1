@@ -5,39 +5,36 @@ using System.Text;
 
 namespace ServiceHub.Room.Context.Repository
 {
-    public class RoomContext
+    public class RoomRepositoryMemory:IRoomsRepository
     {
-        private readonly IRoomsRepository _roomRepository;
-
-        public RoomContext(IRoomsRepository roomRepository)
-        {
-            _roomRepository = roomRepository;
-        }
+        public List<Models.Room> roomList = new List<Models.Room>();
 
         public void Insert(Models.Room room)
         {
-            _roomRepository.Insert(room);
+            roomList.Add(room);
         }
 
         public List<Models.Room> Get()
         {
-            return _roomRepository.Get();
+            return roomList;
         }
 
         public Models.Room GetById(Guid id)
         {
-            return _roomRepository.GetById(id);
+            Models.Room room = roomList.Find(x => x.RoomId == id);
+            return room;
         }
 
         public void Update(Models.Room room)
         {
-            _roomRepository.Update(room);
+            int index = roomList.IndexOf(room);
+            if (index >= 0)
+            roomList[index] = room;
         }
 
         public void Delete(Guid id)
         {
-            _roomRepository.Delete(id);
+            roomList.Remove(roomList.Find(x => x.RoomId == id));
         }
-
     }
 }

@@ -2,10 +2,17 @@
 
   <ItemGroup>
     <PackageReference Include="MongoDB.Driver" Version="2.6.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ServiceHub.Room.Library\ServiceHub.Room.Library.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>C:\Users\green\.nuget\packages\newtonsoft.json\11.0.2\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <PropertyGroup>
