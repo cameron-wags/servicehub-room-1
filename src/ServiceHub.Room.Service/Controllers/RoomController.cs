@@ -28,9 +28,10 @@ namespace ServiceHub.Room.Service.Controllers
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody]object value)
+    public async Task<IActionResult> Post([FromBody]ServiceHub.Room.Library.Room room)
     {
-      return await Task.Run(() => Ok());
+            var myTask = Task.Run(() => repo.Insert(room));//needs mapping
+            return await Task.Run(() => Ok());
     }
 
     [HttpPut("{id}")]
@@ -42,8 +43,10 @@ namespace ServiceHub.Room.Service.Controllers
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-      return await Task.Run(() => Ok());
-    }
+            var myTask = Task.Run(() => repo.Delete(id)); //needs mapping
+            ServiceHub.Room.Library.Room result = await myTask;
+            return //ok;
+        }
 
     protected override void UseReceiver()
     {
