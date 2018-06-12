@@ -9,6 +9,13 @@ namespace ServiceHub.Room.Library.Models
     [DataContract]
     public class Room
     {
+        /// <summary>
+        /// List of valid genders.
+        /// </summary>
+        /// <remarks>
+        /// Empty string means unassigned.
+        /// Values are upper case for case insensitivity.
+        /// </remarks>
         [IgnoreDataMember]
         private static readonly string[] Genders = { "M", "F", "MALE", "FEMALE", "" };
 
