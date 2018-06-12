@@ -6,56 +6,72 @@ using Microsoft.Extensions.Logging;
 
 namespace ServiceHub.Room.Service.Controllers
 {
-  [Route("api/[controller]")]
-  public class RoomController : BaseController
-  {
-    public RoomController(ILoggerFactory loggerFactory, IQueueClient queueClientSingleton)
-      : base(loggerFactory, queueClientSingleton) {}
-
-    public async Task<IActionResult> Get()
+    [Route("api/[controller]")]
+    public class RoomController : BaseController
     {
-      return await Task.Run(() => Ok());
-    }
+        public ServiceHub.Room.Context.Repository.IRoomsRepository repo = new ServiceHub.Room.Context.Repository.RoomsRepository();
+        public RoomController(ILoggerFactory loggerFactory, IQueueClient queueClientSingleton)
+          : base(loggerFactory, queueClientSingleton) { }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> Get(int id)
-    {
-      return await Task.Run(() => Ok());
-    }
+        public async Task<IActionResult> Get()
+        {
+            return await Task.Run(() => Ok());
+        }
 
-    [HttpPost]
-    public async Task<IActionResult> Post([FromBody]object value)
-    {
-      return await Task.Run(() => Ok());
-    }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            var myTask = Task.Run(() => repo.GetById(id)); //needs new get overload that takes id
+            ServiceHub.Room.Library.Room result = await myTask;
+            this.HttpContext.Response.StatusCode = 200;
+            return result;
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody]object value)
-    {
-      return await Task.Run(() => Ok());
-    }
+        }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-      return await Task.Run(() => Ok());
-    }
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody]ServiceHub.Room.Library.Room room)
+        {
+            try
+            {
+                var myTask = Task.Run(() => repo.Insert(room));//needs mapping
+                return StatusCode(200);
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
 
-    protected override void UseReceiver()
-    {
-      var messageHandlerOptions = new MessageHandlerOptions(ReceiverExceptionHandler)
-      {
-        AutoComplete = false
-      };
+        }
 
-      queueClient.RegisterMessageHandler(ReceiverMessageProcessAsync, messageHandlerOptions);
-    }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody]ServiceHub.Room.Library.Room room)
+        {
+            return await Task.Run(() => Ok());
+        }
 
-    protected override void UseSender(Message message)
-    {
-      Task.Run(() =>
-        SenderMessageProcessAsync(message)
-      );
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(System.Guid id)
+        {
+            var myTask = Task.Run(() => repo.Delete(id)); //needs mapping
+            ServiceHub.Room.Library.Room result = await myTask;
+            return StatusCode(200);
+        }
+
+        protected override void UseReceiver()
+        {
+            var messageHandlerOptions = new MessageHandlerOptions(ReceiverExceptionHandler)
+            {
+                AutoComplete = false
+            };
+
+            queueClient.RegisterMessageHandler(ReceiverMessageProcessAsync, messageHandlerOptions);
+        }
+
+        protected override void UseSender(Message message)
+        {
+            Task.Run(() =>
+              SenderMessageProcessAsync(message)
+            );
+        }
     }
-  }
 }
