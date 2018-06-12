@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.ServiceBus;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ServiceHub.Room.Context.Repository;
 
 namespace ServiceHub.Room.Service
 {
@@ -23,12 +25,13 @@ namespace ServiceHub.Room.Service
 
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddSingleton<IQueueClient>(qc => 
-        new QueueClient(
-          Environment.GetEnvironmentVariable("SERVICE_BUS_CONNECTION_STRING"),
-          Environment.GetEnvironmentVariable("SERVICE_BUS_QUEUE_NAME")
-        )
-      );
+      //services.AddSingleton<IQueueClient>(qc => 
+      //  new QueueClient(
+      //    Environment.GetEnvironmentVariable("SERVICE_BUS_CONNECTION_STRING"),
+      //    Environment.GetEnvironmentVariable("SERVICE_BUS_QUEUE_NAME")
+      //  )
+      //);
+      services.AddSingleton<IRoomsRepository, RoomsRepository>();
       services.AddMvc();
     }
 
@@ -41,7 +44,7 @@ namespace ServiceHub.Room.Service
       {
         app.UseDeveloperExceptionPage();
       }
-
+      
       app.UseMvc();
     }
   }

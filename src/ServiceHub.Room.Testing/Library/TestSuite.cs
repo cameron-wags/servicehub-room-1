@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using MongoDB.Bson;
+using Newtonsoft.Json;
 using ServiceHub.Room.Library;
 using Xunit;
 namespace ServiceHub.Room.Testing.Library
@@ -45,6 +47,7 @@ namespace ServiceHub.Room.Testing.Library
             {
                 //RoomId = new Guid(),
                 RoomId = Guid.NewGuid(),
+                //Location = "Tampa",
                 Address = address,
                 Vacancy = 1,
                 Occupancy = 2,
@@ -94,6 +97,7 @@ namespace ServiceHub.Room.Testing.Library
 
             //Assert
             //Assert.False(!actual);
+
             Assert.True(room.isValidState(room));
         }
 

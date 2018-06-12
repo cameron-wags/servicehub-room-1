@@ -11,14 +11,14 @@ namespace ServiceHub.Room.Service.Controllers
   public abstract class BaseController : Controller
   {
     protected readonly ILogger logger;
-    protected readonly IQueueClient queueClient;
+    //protected readonly IQueueClient queueClient;
     protected abstract void UseReceiver();
     protected abstract void UseSender(Message message);
 
-    protected BaseController(ILoggerFactory loggerFactory, IQueueClient queueClientSingleton)
+    protected BaseController(ILoggerFactory loggerFactory /*IQueueClient queueClientSingleton*/)
     {
       logger = loggerFactory.CreateLogger(this.GetType().Name);
-      queueClient = queueClientSingleton;
+      //queueClient = queueClientSingleton;
     }
 
     protected virtual async Task ReceiverExceptionHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
@@ -37,14 +37,14 @@ namespace ServiceHub.Room.Service.Controllers
       if (message.SystemProperties.IsLockTokenSet)
       {
         logger.LogInformation($"{message.MessageId}\n{Encoding.UTF8.GetString(message.Body)}");
-        await queueClient.CompleteAsync(message.SystemProperties.LockToken);
+        //await queueClient.CompleteAsync(message.SystemProperties.LockToken);
       }
     }
 
     protected virtual async Task SenderMessageProcessAsync(Message message)
     {
       logger.LogInformation(message.MessageId);
-      await queueClient.SendAsync(message);
+      //await queueClient.SendAsync(message);
     }
   }
 }

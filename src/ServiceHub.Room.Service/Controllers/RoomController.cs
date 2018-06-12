@@ -1,23 +1,31 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
+using MongoDB.Bson;
+using MongoDB.Bson.IO;
 using ServiceHub.Room.Context.Repository;
 using ServiceHub.Room.Context.Utilities;
+using System.Runtime.Serialization.Json;
 
-using ServiceHub.Room.Library;
 
 namespace ServiceHub.Room.Service.Controllers
 {
-   
-  [Route("api/[controller]")]
+
+    [Route("api/Room")]
   public class RoomController : BaseController
   {
       private IRoomsRepository _context;
-    public RoomController(ILoggerFactory loggerFactory, IQueueClient queueClientSingleton)
-      : base(loggerFactory, queueClientSingleton) {}
+
+      public RoomController(ILoggerFactory loggerFactory,
+          IRoomsRepository context /*, IQueueClient queueClientSingleton*/)
+          : base(loggerFactory /*, queueClientSingleton*/)
+      {
+          _context = context;
+      }
 
     public async Task<IActionResult> Get()
     {
@@ -25,26 +33,27 @@ namespace ServiceHub.Room.Service.Controllers
         var myTask = Task.Run(() => _context.Get());
         List<Context.Models.Room> result = await myTask;
 
-        return Ok(result);
+        return Ok();
         }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(Guid id)
     {
             //return await Task.Run(() => Ok());
-        var myTask = Task.Run(() => _context.GetById(id));
-        Context.Models.Room result = await myTask;
+        //var myTask = Task.Run(() => _context.GetById(id));
+        //Context.Models.Room result = await myTask;
 
-        return Ok(result);
+        return Ok();
         }
 
     [HttpPost]
     public async Task<IActionResult> Post([FromBody]Library.Room value)
     {
-            //return await Task.Run(() => Ok());
+        
+        //return await Task.Run(() => Ok());
         if (!value.isValidState(value))
         {
-            return BadRequest();
+                return BadRequest();
         }
 
         Context.Models.Room room = ModelMapper.LibraryToContext(value);
@@ -54,27 +63,30 @@ namespace ServiceHub.Room.Service.Controllers
         return StatusCode(201);
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody]Library.Room value)
+    [HttpPut]
+    public async Task<IActionResult> Put([FromBody]Library.Room value)
     {
-        Context.Models.Room room = ModelMapper.LibraryToContext(value);
-        var myTask = Task.Run(() => _context.Update(room));
-        await myTask;
+        if (!value.isValidState(value))
+        {
+            return BadRequest();
+        }
+            Context.Models.Room room = ModelMapper.LibraryToContext(value);
+            var myTask = Task.Run(() => _context.Update(room));
+            await myTask;
 
-        //return CreatedAtRoute("api/Room", new { Id = room.RoomId }, value);
-        return StatusCode(203);
+            //return CreatedAtRoute("api/Room", new { Id = room.RoomId }, value);
+            return StatusCode(202);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete]
     public async Task<IActionResult> Delete(Guid id)
     {
         var myTask = Task.Run(() => _context.Delete(id));
-        await myTask;
+        await  myTask;
+        
+        return StatusCode(200);
 
-   
-        return StatusCode(203);
-
-        }
+    }
 
     protected override void UseReceiver()
     {
@@ -83,7 +95,7 @@ namespace ServiceHub.Room.Service.Controllers
         AutoComplete = false
       };
 
-      queueClient.RegisterMessageHandler(ReceiverMessageProcessAsync, messageHandlerOptions);
+      //queueClient.RegisterMessageHandler(ReceiverMessageProcessAsync, messageHandlerOptions);
     }
 
     protected override void UseSender(Message message)
