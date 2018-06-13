@@ -31,27 +31,27 @@ namespace ServiceHub.Room.Service.Controllers
     {
             //return await Task.Run(() => Ok());
         var myTask = Task.Run(() => _context.Get());
-        List<Context.Models.Room> result = await myTask;
+        List<Context.Models.Room> results = await myTask;
 
-        return Ok();
+        return Ok(ModelMapper.ContextToLibrary(results));
         }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(Guid id)
     {
             //return await Task.Run(() => Ok());
-        //var myTask = Task.Run(() => _context.GetById(id));
-        //Context.Models.Room result = await myTask;
+        var myTask = Task.Run(() => _context.GetById(id));
+        Context.Models.Room result = await myTask;
 
-        return Ok();
+        return Ok(ModelMapper.ContextToLibrary(result));
         }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody]Library.Room value)
+    public async Task<IActionResult> Post([FromBody]Library.Models.Room value)
     {
         
         //return await Task.Run(() => Ok());
-        if (!value.isValidState(value))
+        if (!value.isValidState())
         {
                 return BadRequest();
         }
@@ -64,9 +64,9 @@ namespace ServiceHub.Room.Service.Controllers
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put([FromBody]Library.Room value)
+    public async Task<IActionResult> Put([FromBody]Library.Models.Room value)
     {
-        if (!value.isValidState(value))
+        if (!value.isValidState())
         {
             return BadRequest();
         }

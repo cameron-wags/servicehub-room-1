@@ -20,7 +20,7 @@ namespace ServiceHub.Room.Context.Models
         ///</summary>
         public string Location { get; set; }
 
-        ///<summary> This Address model for this room. </summary>
+        ///<summary> The Address model for this room. </summary>
         public Address Address { get; set; }
 
         ///<summary> Number of unassigned beds in this room. </summary>

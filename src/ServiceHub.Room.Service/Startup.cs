@@ -31,7 +31,8 @@ namespace ServiceHub.Room.Service
       //    Environment.GetEnvironmentVariable("SERVICE_BUS_QUEUE_NAME")
       //  )
       //);
-      services.AddSingleton<IRoomsRepository, RoomsRepository>();
+      
+      services.AddScoped<IRoomsRepository, RoomRepositoryMemory>();
       services.AddMvc();
     }
 

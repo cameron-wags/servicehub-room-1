@@ -48,6 +48,27 @@ namespace ServiceHub.Room.Testing.Library
         }
 
         [Fact]
+        public void TestAddressValidationAddress1ToLong()
+        {
+            Address address = new Address
+            {
+                AddressId = Guid.NewGuid(),
+                Address1 = "THIS STRING IS 256 CHARACTERS xxxxxxxxxxxxxxxxxxxxxxxxxxx" +
+                           "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" +
+                           "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" +
+                           "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" +
+                           "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                Address2 = "apt 303",
+                City = "Tampa",
+                Country = "US",
+                PostalCode = "92646",
+                State = "Ca"
+            };
+            Assert.False(address.isValidState());
+        }
+
+
+        [Fact]
         public void TestAddressValidationAddress2()
         {
             Address address = new Address
@@ -62,6 +83,27 @@ namespace ServiceHub.Room.Testing.Library
             };
             
             Assert.True(address.isValidState());
+        }
+
+        [Fact]
+        public void TestAddressValidationAddress2ToLong()
+        {
+            Address address = new Address
+            {
+                AddressId = Guid.NewGuid(),
+                Address1 = "1234 Test st.",
+                Address2 = "THIS STRING IS 256 CHARACTERS xxxxxxxxxxxxxxxxxxxxxxxxxxx" +
+                           "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" +
+                           "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" +
+                           "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" +
+                           "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                City = "Tampa",
+                Country = "US",
+                PostalCode = "92646",
+                State = "Ca"
+            };
+
+            Assert.False(address.isValidState());
         }
 
         [Fact]
@@ -231,6 +273,23 @@ namespace ServiceHub.Room.Testing.Library
                 State = "Ca"
             };
             
+            Assert.False(address.isValidState());
+        }
+
+        [Fact]
+        public void TestAddressValidationInvalidState()
+        {
+            Address address = new Address
+            {
+                AddressId = Guid.NewGuid(),
+                Address1 = "1234 Test st.",
+                Address2 = "apt 303",
+                City = "Tampa",
+                Country = "US",
+                PostalCode = "92646",
+                State = "CW"
+            };
+
             Assert.False(address.isValidState());
         }
     }
