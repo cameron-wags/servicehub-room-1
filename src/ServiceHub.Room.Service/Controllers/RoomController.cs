@@ -41,9 +41,9 @@ namespace ServiceHub.Room.Service.Controllers
         public async Task<IActionResult> Get(Guid id)
         {
             var myTask = Task.Run(() => _repo.GetById(id)); //needs new get overload that takes id
-            ServiceHub.Room.Library.Models.Room result = await myTask;
-            this.HttpContext.Response.StatusCode = 200;
-            return result;
+            ServiceHub.Room.Library.Models.Room result = ServiceHub.Room.Context.Utilities.ModelMapper.ContextToLibrary(await myTask);
+            //this.HttpContext.Response.StatusCode = 200;
+            return new ObjectResult(result);
 
         }
 
@@ -52,7 +52,7 @@ namespace ServiceHub.Room.Service.Controllers
         {
             try
             {
-                var myTask = Task.Run(() => _repo.Insert(room));//needs mapping
+                var myTask = Task.Run(() => _repo.Insert(ServiceHub.Room.Context.Utilities.ModelMapper.LibraryToContext(room) ));
                 return StatusCode(200);
             }
             catch
@@ -69,11 +69,21 @@ namespace ServiceHub.Room.Service.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> Delete(System.Guid id)
         {
-            var myTask = Task.Run(() => _repo.Delete(id)); //needs mapping
-            ServiceHub.Room.Library.Models.Room result = await myTask;
-            return StatusCode(200);
+            try
+            {
+                var myTask = Task.Run(() => _repo.Delete(id));
+                await myTask;
+                return new StatusCodeResult(200);
+            }
+            catch
+            {
+                return new StatusCodeResult(500);
+            }
+            
         }
 
         protected override void UseReceiver()
