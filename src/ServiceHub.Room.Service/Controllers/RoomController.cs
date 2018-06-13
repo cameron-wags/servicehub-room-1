@@ -11,23 +11,28 @@ namespace ServiceHub.Room.Service.Controllers
     public class RoomController : BaseController
     {
 
-        private ServiceHub.Room.Context.Repository.IRoomsRepository _repo;
+
+        //make a room context and passs it
+        //dependancy injection, takes in the concretion as argument
+        private Context.Repository.RoomContext _repo;
 
         public RoomController(ILoggerFactory loggerFactory, IQueueClient queueClientSingleton)
-          : base(loggerFactory, queueClientSingleton)
-        {
-
-            _repo = new ServiceHub.Room.Context.Repository.RoomsRepository();
+          : base(loggerFactory, queueClientSingleton) {
+            _repo = new Context.Repository.RoomContext(new Context.Repository.RoomRepositoryMemory());
         }
 
         [HttpGet]
         [ProducesResponseType(500)]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<ServiceHub.Room.Library.Models.Room>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Library.Models.Room>))]
         public async Task<IActionResult> Get()
         {
             try
             {
-                var rooms = _repo.Get();
+                var rooms = new List<Library.Models.Room>();
+                foreach (var r in _repo.Get())
+                {
+                    rooms.Add(Context.Utilities.ModelMapper.ContextToLibrary(r));
+                }
                 return await Task.Run(() => Ok(rooms));
             }
             catch
@@ -37,22 +42,40 @@ namespace ServiceHub.Room.Service.Controllers
             
         }
 
+        [HttpGet]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(200, Type = typeof(Library.Models.Room))]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            try
+            {
+                Library.Models.Room room = Context.Utilities.ModelMapper.ContextToLibrary(_repo.GetById(id));
+                return await Task.Run(() => Ok(room));
+            }
+            catch
+            {
+                return new StatusCodeResult(500);
+            }
+
+        }
+
+        /*
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
             var myTask = Task.Run(() => _repo.GetById(id)); //needs new get overload that takes id
-            ServiceHub.Room.Library.Models.Room result = ServiceHub.Room.Context.Utilities.ModelMapper.ContextToLibrary(await myTask);
+            ServiceHub.Room.Library.Models.Room result = Context.Utilities.ModelMapper.ContextToLibrary(await myTask);
             //this.HttpContext.Response.StatusCode = 200;
             return new ObjectResult(result);
 
         }
-
+        */
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]ServiceHub.Room.Library.Models.Room room)
+        public async Task<IActionResult> Post([FromBody]Library.Models.Room room)
         {
             try
             {
-                var myTask = Task.Run(() => _repo.Insert(ServiceHub.Room.Context.Utilities.ModelMapper.LibraryToContext(room) ));
+                var myTask = Task.Run(() => _repo.Insert(Context.Utilities.ModelMapper.LibraryToContext(room) ));
                 return StatusCode(200);
             }
             catch
@@ -63,9 +86,9 @@ namespace ServiceHub.Room.Service.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody]ServiceHub.Room.Library.Models.Room room)
+        public async Task<IActionResult> Put(int id, [FromBody]Library.Models.Room room)
         {
-            return await Task.Run(() => Ok());
+            return await Task.Run(() => Ok()); 
         }
 
         [HttpDelete("{id}")]
