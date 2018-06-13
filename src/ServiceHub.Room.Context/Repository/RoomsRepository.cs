@@ -51,8 +51,8 @@ namespace ServiceHub.Room.Context.Repository
             {
                 throw new ArgumentNullException(nameof(_collection));
             }
-
-            return _collection.Find(new BsonDocument()).ToList();
+            
+            return _collection.AsQueryable().AsEnumerable().ToList();
         }
 
         public Models.Room GetById(Guid id)
