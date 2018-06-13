@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.ServiceBus;
@@ -9,31 +10,49 @@ namespace ServiceHub.Room.Service.Controllers
     [Route("api/[controller]")]
     public class RoomController : BaseController
     {
-        public ServiceHub.Room.Context.Repository.IRoomsRepository repo = new ServiceHub.Room.Context.Repository.RoomsRepository();
-        public RoomController(ILoggerFactory loggerFactory, IQueueClient queueClientSingleton)
-          : base(loggerFactory, queueClientSingleton) { }
 
+        private ServiceHub.Room.Context.Repository.IRoomsRepository _repo;
+
+        public RoomController(ILoggerFactory loggerFactory, IQueueClient queueClientSingleton)
+          : base(loggerFactory, queueClientSingleton)
+        {
+
+            _repo = new ServiceHub.Room.Context.Repository.RoomsRepository();
+        }
+
+        [HttpGet]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ServiceHub.Room.Library.Models.Room>))]
         public async Task<IActionResult> Get()
         {
-            return await Task.Run(() => Ok());
+            try
+            {
+                var rooms = _repo.Get();
+                return await Task.Run(() => Ok(rooms));
+            }
+            catch
+            {
+                return new StatusCodeResult(500);
+            }
+            
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var myTask = Task.Run(() => repo.GetById(id)); //needs new get overload that takes id
-            ServiceHub.Room.Library.Room result = await myTask;
+            var myTask = Task.Run(() => _repo.GetById(id)); //needs new get overload that takes id
+            ServiceHub.Room.Library.Models.Room result = await myTask;
             this.HttpContext.Response.StatusCode = 200;
             return result;
 
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]ServiceHub.Room.Library.Room room)
+        public async Task<IActionResult> Post([FromBody]ServiceHub.Room.Library.Models.Room room)
         {
             try
             {
-                var myTask = Task.Run(() => repo.Insert(room));//needs mapping
+                var myTask = Task.Run(() => _repo.Insert(room));//needs mapping
                 return StatusCode(200);
             }
             catch
@@ -44,7 +63,7 @@ namespace ServiceHub.Room.Service.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody]ServiceHub.Room.Library.Room room)
+        public async Task<IActionResult> Put(int id, [FromBody]ServiceHub.Room.Library.Models.Room room)
         {
             return await Task.Run(() => Ok());
         }
@@ -52,8 +71,8 @@ namespace ServiceHub.Room.Service.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(System.Guid id)
         {
-            var myTask = Task.Run(() => repo.Delete(id)); //needs mapping
-            ServiceHub.Room.Library.Room result = await myTask;
+            var myTask = Task.Run(() => _repo.Delete(id)); //needs mapping
+            ServiceHub.Room.Library.Models.Room result = await myTask;
             return StatusCode(200);
         }
 
