@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ServiceHub.Room.Context.Models;
 
 namespace ServiceHub.Room.Context.Utilities
@@ -61,6 +60,10 @@ namespace ServiceHub.Room.Context.Utilities
         /// <param name="contextRooms">A list of context model Rooms.</param>
         /// <returns>List of converted Room library models. Null if a model in the list is invalid and cannot be mapped.</returns>
         public static List<Library.Models.Room> ContextToLibrary(List<Models.Room> contextRooms) {
+            if (contextRooms == null) {
+                return null;
+            }
+            
             List<Library.Models.Room> result = new List<Library.Models.Room>();
 
             foreach (var room in contextRooms) {
@@ -81,7 +84,7 @@ namespace ServiceHub.Room.Context.Utilities
         /// </summary>
         /// <param name="libraryAddress">A library Address model.</param>
         /// <returns>A converted Address context model. Null if the model is invalid and cannot be mapped.</returns>
-        private static Models.Address LibraryToContext(Library.Models.Address libraryAddress) {
+        private static Address LibraryToContext(Library.Models.Address libraryAddress) {
             if (libraryAddress == null || !libraryAddress.isValidState()) {
                 return null;
             }
@@ -102,7 +105,7 @@ namespace ServiceHub.Room.Context.Utilities
         /// </summary>
         /// <param name="contextAddress">A context Address model.</param>
         /// <returns>A converted Address library model. Null if the model is invalid and cannot be mapped.</returns>
-        private static Library.Models.Address ContextToLibrary(Models.Address contextAddress) {
+        private static Library.Models.Address ContextToLibrary(Address contextAddress) {
             if (contextAddress == null) {
                 return null;
             }
