@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ServiceHub.Room.Context.Models;
 
 namespace ServiceHub.Room.Context.Utilities
@@ -13,11 +12,10 @@ namespace ServiceHub.Room.Context.Utilities
         /// Converts a library room to a context room.
         /// </summary>
         /// <param name="libraryRoom">Library model Room</param>
-        /// <exception cref="InvalidCastException">If given model is invalid and cannot be mapped.</exception>
-        /// <returns>Converted Room context model.</returns>
+        /// <returns>Converted Room context model. Null if given model is invalid and cannot be mapped.</returns>
         public static Models.Room LibraryToContext(Library.Models.Room libraryRoom) {
-            if (!libraryRoom.isValidState()) {
-                throw new InvalidCastException(message: "Cannot cast invalid model.");
+            if (libraryRoom == null || !libraryRoom.isValidState()) {
+                return null;
             }
 
             return new Models.Room() {
@@ -34,9 +32,12 @@ namespace ServiceHub.Room.Context.Utilities
         /// Converts a context room to a library room.
         /// </summary>
         /// <param name="contextRoom">Context model Room</param>
-        /// <exception cref="InvalidCastException">If given model is invalid and cannot be mapped.</exception>
-        /// <returns>Converted Room library model.</returns>
+        /// <returns>Converted Room library model. Null if given model is invalid and cannot be mapped.</returns>
         public static Library.Models.Room ContextToLibrary(Models.Room contextRoom) {
+            if (contextRoom == null) {
+                return null;
+            }
+
             var libRoom = new Library.Models.Room() {
                 RoomId = contextRoom.RoomId,
                 Location = contextRoom.Location,
@@ -47,7 +48,7 @@ namespace ServiceHub.Room.Context.Utilities
             };
 
             if (!libRoom.isValidState()) {
-                throw new InvalidCastException(message: "Resulting model is invalid.");
+                return null;
             }
 
             return libRoom;
@@ -57,13 +58,22 @@ namespace ServiceHub.Room.Context.Utilities
         /// Converts a list of context rooms to a list of library rooms.
         /// </summary>
         /// <param name="contextRooms">A list of context model Rooms.</param>
-        /// <exception cref="InvalidCastException">If a model in the list is invalid and cannot be mapped.</exception>
-        /// <returns>List of converted Room library models.</returns>
+        /// <returns>List of converted Room library models. Null if a model in the list is invalid and cannot be mapped.</returns>
         public static List<Library.Models.Room> ContextToLibrary(List<Models.Room> contextRooms) {
+            if (contextRooms == null) {
+                return null;
+            }
+            
             List<Library.Models.Room> result = new List<Library.Models.Room>();
 
             foreach (var room in contextRooms) {
-                result.Add(ContextToLibrary(room));
+                var libRoom = ContextToLibrary(room);
+                if (libRoom == null) {
+                    return null;
+                }
+                else {
+                    result.Add(libRoom);
+                }
             }
 
             return result;
@@ -73,11 +83,10 @@ namespace ServiceHub.Room.Context.Utilities
         /// Converts a library address to a context address.
         /// </summary>
         /// <param name="libraryAddress">A library Address model.</param>
-        /// <exception cref="InvalidCastException">If the model is invalid and cannot be mapped.</exception>
-        /// <returns>A converted Address context model.</returns>
-        private static Models.Address LibraryToContext(Library.Models.Address libraryAddress) {
-            if (!libraryAddress.isValidState()) {
-                throw new InvalidCastException(message: "Cannot cast invalid model.");
+        /// <returns>A converted Address context model. Null if the model is invalid and cannot be mapped.</returns>
+        private static Address LibraryToContext(Library.Models.Address libraryAddress) {
+            if (libraryAddress == null || !libraryAddress.isValidState()) {
+                return null;
             }
 
             return new Address() {
@@ -95,9 +104,12 @@ namespace ServiceHub.Room.Context.Utilities
         /// Converts a context address to a library address.
         /// </summary>
         /// <param name="contextAddress">A context Address model.</param>
-        /// <exception cref="InvalidCastException">If the model is invalid and cannot be mapped.</exception>
-        /// <returns>A converted Address library model.</returns>
-        private static Library.Models.Address ContextToLibrary(Models.Address contextAddress) {
+        /// <returns>A converted Address library model. Null if the model is invalid and cannot be mapped.</returns>
+        private static Library.Models.Address ContextToLibrary(Address contextAddress) {
+            if (contextAddress == null) {
+                return null;
+            }
+
             var libAddress = new Library.Models.Address() {
                 AddressId = contextAddress.AddressId,
                 Address1 = contextAddress.Address1,
@@ -109,7 +121,7 @@ namespace ServiceHub.Room.Context.Utilities
             };
 
             if (!libAddress.isValidState()) {
-                throw new InvalidCastException(message: "Resulting model is invalid.");
+                return null;
             }
 
             return libAddress;

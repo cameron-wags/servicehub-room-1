@@ -3,14 +3,20 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
+<<<<<<< HEAD
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using ServiceHub.Room.Context.Repository;
 using ServiceHub.Room.Context.Utilities;
 using System.Runtime.Serialization.Json;
 
+=======
+using ServiceHub.Room.Context.Repository;
+using ServiceHub.Room.Context.Utilities;
+>>>>>>> room-lib
 
 namespace ServiceHub.Room.Service.Controllers
 {
@@ -18,6 +24,7 @@ namespace ServiceHub.Room.Service.Controllers
     [Route("api/Room")]
   public class RoomController : BaseController
   {
+<<<<<<< HEAD
       private IRoomsRepository _context;
 
       public RoomController(ILoggerFactory loggerFactory,
@@ -26,6 +33,11 @@ namespace ServiceHub.Room.Service.Controllers
       {
           _context = context;
       }
+=======
+      private static readonly RoomContext _context = new RoomContext(new RoomRepositoryMemory());
+    public RoomController(ILoggerFactory loggerFactory, IQueueClient queueClientSingleton)
+      : base(loggerFactory, queueClientSingleton) {}
+>>>>>>> room-lib
 
     public async Task<IActionResult> Get()
     {
@@ -63,6 +75,7 @@ namespace ServiceHub.Room.Service.Controllers
         return StatusCode(201);
     }
 
+<<<<<<< HEAD
     [HttpPut]
     public async Task<IActionResult> Put([FromBody]Library.Models.Room value)
     {
@@ -76,6 +89,41 @@ namespace ServiceHub.Room.Service.Controllers
 
             //return CreatedAtRoute("api/Room", new { Id = room.RoomId }, value);
             return StatusCode(202);
+=======
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(Guid id, [FromBody]Library.Models.Room roomMod) {
+        var ctxItem = _context.GetById(id);
+        
+        var item = ModelMapper.ContextToLibrary(ctxItem);
+
+        if (roomMod.Location != null) {
+            item.Location = roomMod.Location;
+        }
+
+        if (roomMod.Gender != null) {
+            item.Gender = roomMod.Gender;
+        }
+
+        if (roomMod.Vacancy != null) {
+            item.Vacancy = roomMod.Vacancy;
+        }
+
+        if (item.isValidState()) {
+            var newCtxItem = ModelMapper.LibraryToContext(item);
+            if (newCtxItem != null) {
+                    _context.Update(newCtxItem);
+                return Ok(item);
+            }
+            else {
+                return StatusCode(500);
+            }
+        }
+        else {
+            return BadRequest("Invalid change.");
+        }
+
+        //return await Task.Run(() => Ok());
+>>>>>>> room-lib
     }
 
     [HttpDelete]
