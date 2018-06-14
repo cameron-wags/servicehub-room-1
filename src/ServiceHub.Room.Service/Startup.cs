@@ -16,9 +16,11 @@ namespace ServiceHub.Room.Service {
         }
 
         public void ConfigureServices(IServiceCollection services) {
+            string remotedb = @"mongodb://cameron-wags:rp7KMfeoIp0KgM7dMMpnZDF9Cmtde0PIlQAQ9pdrpZZaZdO9Pqt9mk8VXl3upDpp2pyrzajfNvOm2JZtqfOzkQ==@cameron-wags.documents.azure.com:10255/?ssl=true&replicaSet=globaldb";
+            string demodb = @"mongodb://db";
 
             services.AddSingleton(mc =>
-                new MongoClient(@"mongodb://db").GetDatabase("rooms").GetCollection<Context.Models.Room>("rooms"));
+                new MongoClient(remotedb).GetDatabase("rooms").GetCollection<Context.Models.Room>("rooms"));
 
             services.AddTransient<IRoomsRepository, RoomsRepository>();
 
