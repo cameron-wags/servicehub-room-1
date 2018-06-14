@@ -1,14 +1,18 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
+using ServiceHub.Room.Context.Repository;
+using ServiceHub.Room.Context.Utilities;
 
 namespace ServiceHub.Room.Service.Controllers
 {
   [Route("api/[controller]")]
   public class RoomController : BaseController
   {
+      private static readonly RoomContext _context = new RoomContext(new RoomRepositoryMemory());
     public RoomController(ILoggerFactory loggerFactory, IQueueClient queueClientSingleton)
       : base(loggerFactory, queueClientSingleton) {}
 
@@ -30,9 +34,38 @@ namespace ServiceHub.Room.Service.Controllers
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody]object value)
-    {
-      return await Task.Run(() => Ok());
+    public async Task<IActionResult> Put(Guid id, [FromBody]Library.Models.Room roomMod) {
+        var ctxItem = _context.GetById(id);
+        
+        var item = ModelMapper.ContextToLibrary(ctxItem);
+
+        if (roomMod.Location != null) {
+            item.Location = roomMod.Location;
+        }
+
+        if (roomMod.Gender != null) {
+            item.Gender = roomMod.Gender;
+        }
+
+        if (roomMod.Vacancy != null) {
+            item.Vacancy = roomMod.Vacancy;
+        }
+
+        if (item.isValidState()) {
+            var newCtxItem = ModelMapper.LibraryToContext(item);
+            if (newCtxItem != null) {
+                    _context.Update(newCtxItem);
+                return Ok(item);
+            }
+            else {
+                return StatusCode(500);
+            }
+        }
+        else {
+            return BadRequest("Invalid change.");
+        }
+
+        //return await Task.Run(() => Ok());
     }
 
     [HttpDelete("{id}")]
