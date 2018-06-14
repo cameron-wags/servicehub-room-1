@@ -5,7 +5,7 @@ networks:
 
 services:
   web:
-    image: revaturecloud/servicehub-room:latest
+    image: local-api
     deploy:
       replicas: 1
       resources:
@@ -26,6 +26,8 @@ services:
       - "9000:80"
   db:
     image: mongo:3.6
+    deploy:
+      replicas: 1
     networks:
       - appnet
 
