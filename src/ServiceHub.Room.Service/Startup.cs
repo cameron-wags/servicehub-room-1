@@ -9,40 +9,44 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MongoDB.Driver;
+using ServiceHub.Room.Context.Repository;
 
-namespace ServiceHub.Room.Service
-{
-  public class Startup
-  {
-    public IConfiguration Configuration { get; }
+namespace ServiceHub.Room.Service {
 
-    public Startup(IConfiguration configuration)
-    {
-      Configuration = configuration;
+    public class Startup {
+        public IConfiguration Configuration { get; }
+
+        public Startup(IConfiguration configuration) {
+            Configuration = configuration;
+        }
+
+        public void ConfigureServices(IServiceCollection services) {
+            services.AddSingleton<IQueueClient>(qc =>
+                new QueueClient(
+                    Environment.GetEnvironmentVariable("SERVICE_BUS_CONNECTION_STRING"),
+                    Environment.GetEnvironmentVariable("SERVICE_BUS_QUEUE_NAME")
+                )
+            );
+
+            services.AddSingleton(mc =>
+                new MongoClient(@"mongodb://db").GetDatabase("rooms").GetCollection<Context.Models.Room>("rooms"));
+
+            services.AddTransient<IRoomsRepository, RoomsRepository>();
+
+            services.AddMvc();
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {
+            loggerFactory.AddApplicationInsights(app.ApplicationServices);
+
+            if (env.IsDevelopment()) {
+                app.UseDeveloperExceptionPage();
+            }
+
+            app.UseMvc();
+        }
     }
 
-    public void ConfigureServices(IServiceCollection services)
-    {
-      services.AddSingleton<IQueueClient>(qc => 
-        new QueueClient(
-          Environment.GetEnvironmentVariable("SERVICE_BUS_CONNECTION_STRING"),
-          Environment.GetEnvironmentVariable("SERVICE_BUS_QUEUE_NAME")
-        )
-      );
-      services.AddMvc();
-    }
-
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-    {
-      loggerFactory.AddApplicationInsights(app.ApplicationServices);
-      
-      if (env.IsDevelopment())
-      {
-        app.UseDeveloperExceptionPage();
-      }
-
-      app.UseMvc();
-    }
-  }
 }

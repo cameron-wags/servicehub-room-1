@@ -10,11 +10,13 @@ using ServiceHub.Room.Context.Utilities;
 namespace ServiceHub.Room.Service.Controllers
 {
   [Route("api/[controller]")]
-  public class RoomController : BaseController
+  public class RoomController : Controller
   {
-      private static readonly RoomContext _context = new RoomContext(new RoomRepositoryMemory());
-    public RoomController(ILoggerFactory loggerFactory, IQueueClient queueClientSingleton)
-      : base(loggerFactory, queueClientSingleton) {}
+      private readonly RoomContext _context;
+
+      public RoomController(IRoomsRepository repo) {
+            _context = new RoomContext(repo);
+      }
 
     public async Task<IActionResult> Get()
     {
@@ -74,21 +76,5 @@ namespace ServiceHub.Room.Service.Controllers
       return await Task.Run(() => Ok());
     }
 
-    protected override void UseReceiver()
-    {
-      var messageHandlerOptions = new MessageHandlerOptions(ReceiverExceptionHandler)
-      {
-        AutoComplete = false
-      };
-
-      queueClient.RegisterMessageHandler(ReceiverMessageProcessAsync, messageHandlerOptions);
-    }
-
-    protected override void UseSender(Message message)
-    {
-      Task.Run(() =>
-        SenderMessageProcessAsync(message)
-      );
-    }
   }
 }
