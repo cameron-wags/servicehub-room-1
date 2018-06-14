@@ -24,9 +24,9 @@ namespace ServiceHub.Room.Context.Repository
         private readonly string _metadataId;
         private long _CurrentCount;
 
-        public RoomsRepository(Settings settings)
+        public RoomsRepository(IMongoCollection<Models.Room> collection)
         {
-            MongoClientSettings mongoSettings = MongoClientSettings.FromUrl(new MongoUrl(settings.ConnectionString));
+            /*MongoClientSettings mongoSettings = MongoClientSettings.FromUrl(new MongoUrl(settings.ConnectionString));
             mongoSettings.SslSettings = new SslSettings() { EnabledSslProtocols = SslProtocols.Tls12 };
             _client = new MongoClient(mongoSettings);
             _salesforceapi = new HttpClient();
@@ -34,7 +34,8 @@ namespace ServiceHub.Room.Context.Repository
             _MetaDataCollection = settings.MetaDataCollectionName;
             _metadataId = settings.MetaDataId;
             _db = _client.GetDatabase(settings.Database);
-            _collection = _db.GetCollection<Models.Room>(settings.CollectionName);
+            _collection = _db.GetCollection<Models.Room>(settings.CollectionName);*/
+            _collection = collection;
         }
         public void Insert(Models.Room room)
         {
