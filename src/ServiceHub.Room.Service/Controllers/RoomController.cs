@@ -1,21 +1,27 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MongoDB.Bson;
+using MongoDB.Bson.IO;
 using ServiceHub.Room.Context.Repository;
 using ServiceHub.Room.Context.Utilities;
+using System.Runtime.Serialization.Json;
 
-namespace ServiceHub.Room.Service.Controllers {
-
+namespace ServiceHub.Room.Service.Controllers
+{
     [Route("api/[controller]")]
     public class RoomController : BaseController
     {
         private readonly RoomContext _context;
+
         public RoomController(ILoggerFactory loggerFactory, IRoomsRepository repo) : base(loggerFactory)
         {
             _context = new RoomContext(repo);
         }
+
         [HttpGet]
         [ProducesResponseType(500)]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Library.Models.Room>))]
@@ -28,19 +34,19 @@ namespace ServiceHub.Room.Service.Controllers {
                 {
                     rooms.Add(Context.Utilities.ModelMapper.ContextToLibrary(r));
                 }
+
                 return await Task.Run(() => Ok(rooms));
             }
             catch
             {
                 return new StatusCodeResult(500);
             }
-
         }
 
         [HttpGet]
         [ProducesResponseType(500)]
         [ProducesResponseType(200, Type = typeof(Library.Models.Room))]
-        public async Task<IActionResult> GetById(Guid id)
+        public async Task<IActionResult> Get(Guid id)
         {
             try
             {
@@ -51,46 +57,47 @@ namespace ServiceHub.Room.Service.Controllers {
             {
                 return new StatusCodeResult(500);
             }
-
         }
 
-        /*
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id)
-        {
-            var myTask = Task.Run(() => _context.GetById(id)); //needs new get overload that takes id
-            ServiceHub.Room.Library.Models.Room result = Context.Utilities.ModelMapper.ContextToLibrary(await myTask);
-            //this.HttpContext.Response.StatusCode = 200;
-            return new ObjectResult(result);
-
-        }
-        */
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]Library.Models.Room room)
+        public async Task<IActionResult> Post([FromBody] Library.Models.Room value)
         {
-            try
+            //return await Task.Run(() => Ok());
+            if (!value.isValidState())
             {
-                if (!room.isValidState())
-                {
-                    return BadRequest();
-                }
-                Context.Models.Room val = Context.Utilities.ModelMapper.LibraryToContext(room);
-                var myTask = Task.Run(() => _context.Insert(val));
-                await myTask;
-                return StatusCode(201);
-            }
-            catch
-            {
-                return StatusCode(500);
+                return BadRequest();
             }
 
+            Context.Models.Room room = ModelMapper.LibraryToContext(value);
+            var myTask = Task.Run(() => _context.Insert(room));
+            await myTask;
+
+            return StatusCode(201);
+        }
+
+
+        [HttpPut]
+        public async Task<IActionResult> Put([FromBody] Library.Models.Room value)
+        {
+            if (!value.isValidState())
+            {
+                return BadRequest();
+            }
+
+            Context.Models.Room room = ModelMapper.LibraryToContext(value);
+            var myTask = Task.Run(() => _context.Update(room));
+            await myTask;
+
+            //return CreatedAtRoute("api/Room", new { Id = room.RoomId }, value);
+            return StatusCode(202);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(Guid id, [FromBody]Library.Models.Room roomMod)
+        public async Task<IActionResult> Put(Guid id, [FromBody] Library.Models.Room roomMod)
         {
             var ctxItem = _context.GetById(id);
-            var item = Context.Utilities.ModelMapper.ContextToLibrary(ctxItem);
+
+            var item = ModelMapper.ContextToLibrary(ctxItem);
 
             if (roomMod.Location != null)
             {
@@ -125,6 +132,7 @@ namespace ServiceHub.Room.Service.Controllers {
             {
                 return BadRequest("Invalid change.");
             }
+
             //return await Task.Run(() => Ok()); 
         }
 
@@ -143,7 +151,6 @@ namespace ServiceHub.Room.Service.Controllers {
             {
                 return new StatusCodeResult(500);
             }
-
         }
     }
 }
