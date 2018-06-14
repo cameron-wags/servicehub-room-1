@@ -17,7 +17,7 @@ namespace ServiceHub.Room.Service.Controllers
 
     protected BaseController(ILoggerFactory loggerFactory /*IQueueClient queueClientSingleton*/)
     {
-      logger = loggerFactory.CreateLogger(this.GetType().Name);
+      //logger = loggerFactory.CreateLogger(this.GetType().Name);
       //queueClient = queueClientSingleton;
     }
 

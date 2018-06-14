@@ -6,17 +6,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
-<<<<<<< HEAD
+
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using ServiceHub.Room.Context.Repository;
 using ServiceHub.Room.Context.Utilities;
 using System.Runtime.Serialization.Json;
 
-=======
+
 using ServiceHub.Room.Context.Repository;
 using ServiceHub.Room.Context.Utilities;
->>>>>>> room-lib
+
 
 namespace ServiceHub.Room.Service.Controllers
 {
@@ -24,20 +24,24 @@ namespace ServiceHub.Room.Service.Controllers
     [Route("api/Room")]
   public class RoomController : BaseController
   {
-<<<<<<< HEAD
-      private IRoomsRepository _context;
 
-      public RoomController(ILoggerFactory loggerFactory,
-          IRoomsRepository context /*, IQueueClient queueClientSingleton*/)
+      //private IRoomsRepository _context;
+
+      //public RoomController(ILoggerFactory loggerFactory,
+      //    IRoomsRepository context /*, IQueueClient queueClientSingleton*/)
+      //    : base(loggerFactory /*, queueClientSingleton*/)
+      //{
+      //    _context = context;
+      //}
+
+      private readonly IRoomsRepository _context;/* = new RoomContext(new RoomRepositoryMemory());*/
+
+      public RoomController(ILoggerFactory loggerFactory, IQueueClient queueClientSingleton, IRoomsRepository context)
           : base(loggerFactory /*, queueClientSingleton*/)
       {
           _context = context;
       }
-=======
-      private static readonly RoomContext _context = new RoomContext(new RoomRepositoryMemory());
-    public RoomController(ILoggerFactory loggerFactory, IQueueClient queueClientSingleton)
-      : base(loggerFactory, queueClientSingleton) {}
->>>>>>> room-lib
+
 
     public async Task<IActionResult> Get()
     {
@@ -75,22 +79,24 @@ namespace ServiceHub.Room.Service.Controllers
         return StatusCode(201);
     }
 
-<<<<<<< HEAD
-    [HttpPut]
-    public async Task<IActionResult> Put([FromBody]Library.Models.Room value)
-    {
-        if (!value.isValidState())
-        {
-            return BadRequest();
-        }
-            Context.Models.Room room = ModelMapper.LibraryToContext(value);
-            var myTask = Task.Run(() => _context.Update(room));
-            await myTask;
 
-            //return CreatedAtRoute("api/Room", new { Id = room.RoomId }, value);
-            return StatusCode(202);
-=======
-    [HttpPut("{id}")]
+      [HttpPut]
+      public async Task<IActionResult> Put([FromBody] Library.Models.Room value)
+      {
+          if (!value.isValidState())
+          {
+              return BadRequest();
+          }
+
+          Context.Models.Room room = ModelMapper.LibraryToContext(value);
+          var myTask = Task.Run(() => _context.Update(room));
+          await myTask;
+
+          //return CreatedAtRoute("api/Room", new { Id = room.RoomId }, value);
+          return StatusCode(202);
+      }
+
+      [HttpPut("{id}")]
     public async Task<IActionResult> Put(Guid id, [FromBody]Library.Models.Room roomMod) {
         var ctxItem = _context.GetById(id);
         
@@ -123,7 +129,7 @@ namespace ServiceHub.Room.Service.Controllers
         }
 
         //return await Task.Run(() => Ok());
->>>>>>> room-lib
+
     }
 
     [HttpDelete]
