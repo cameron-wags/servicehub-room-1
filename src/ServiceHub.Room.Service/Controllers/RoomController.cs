@@ -1,11 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-<<<<<<< HEAD
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.Azure.ServiceBus;
-=======
->>>>>>> 157252833-room-controller
 using Microsoft.Extensions.Logging;
 using ServiceHub.Room.Context.Repository;
 using ServiceHub.Room.Context.Utilities;
@@ -15,13 +10,7 @@ namespace ServiceHub.Room.Service.Controllers
   [Route("api/[controller]")]
   public class RoomController : BaseController
   {
-<<<<<<< HEAD
-      private static readonly RoomContext _context = new RoomContext(new RoomRepositoryMemory());
-    public RoomController(ILoggerFactory loggerFactory, IQueueClient queueClientSingleton)
-      : base(loggerFactory, queueClientSingleton) {}
-=======
     public RoomController(ILoggerFactory loggerFactory) : base(loggerFactory) {}
->>>>>>> 157252833-room-controller
 
     public async Task<IActionResult> Get()
     {
