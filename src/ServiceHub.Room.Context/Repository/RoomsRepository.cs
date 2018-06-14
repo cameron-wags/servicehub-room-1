@@ -12,29 +12,10 @@ namespace ServiceHub.Room.Context.Repository
 {
     public class RoomsRepository: IRoomsRepository
     {
-
-        public const string MongoDbIdName = "_id";
-        protected readonly IMongoClient _client;
-        protected readonly IMongoDatabase _db;
         private readonly IMongoCollection<Models.Room> _collection;
-        private readonly HttpClient _salesforceapi;
-        private readonly string _baseUrl;
-        private readonly MetaData _metadata;
-        private readonly string _MetaDataCollection;
-        private readonly string _metadataId;
-        private long _CurrentCount;
-
+     
         public RoomsRepository(IMongoCollection<Models.Room> collection)
         {
-            /*MongoClientSettings mongoSettings = MongoClientSettings.FromUrl(new MongoUrl(settings.ConnectionString));
-            mongoSettings.SslSettings = new SslSettings() { EnabledSslProtocols = SslProtocols.Tls12 };
-            _client = new MongoClient(mongoSettings);
-            _salesforceapi = new HttpClient();
-            _baseUrl = settings.BaseURL;
-            _MetaDataCollection = settings.MetaDataCollectionName;
-            _metadataId = settings.MetaDataId;
-            _db = _client.GetDatabase(settings.Database);
-            _collection = _db.GetCollection<Models.Room>(settings.CollectionName);*/
             _collection = collection;
         }
         public void Insert(Models.Room room)
@@ -52,8 +33,9 @@ namespace ServiceHub.Room.Context.Repository
             {
                 throw new ArgumentNullException(nameof(_collection));
             }
-            
-            return _collection.AsQueryable().AsEnumerable().ToList();
+
+            return _collection.AsQueryable().ToList();
+
         }
 
         public Models.Room GetById(Guid id)
