@@ -52,7 +52,7 @@ namespace ServiceHub.Room.Context.Repository
                 throw new ArgumentNullException(nameof(_collection));
             }
 
-            return _collection.AsQueryable().AsEnumerable().ToList();
+            return _collection.AsQueryable().ToList();
 
         }
 
