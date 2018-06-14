@@ -7,20 +7,21 @@ using System.Threading.Tasks;
 using ServiceHub.Room.Context.Models;
 using ServiceHub.Room.Service.Controllers;
 using ServiceHub.Room.Context.Repository;
+using ServiceHub.Room.Context.Utilities;
 using Xunit;
 
 namespace ServiceHub.Room.Testing.Service
 {
     public class RoomControllerTest
     {
-        private Address address;
-        private Room.Context.Models.Room room;
+        private Room.Library.Models.Address address;
+        private Room.Library.Models.Room room;
         private RoomRepositoryMemory context;
 
         public RoomControllerTest()
         {
             context = new RoomRepositoryMemory();
-            address = new Address
+            address = new Room.Library.Models.Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -31,7 +32,7 @@ namespace ServiceHub.Room.Testing.Service
                 State = "Ca"
             };
 
-            room = new Room.Context.Models.Room
+            room = new Room.Library.Models.Room
             {
                 RoomId = Guid.NewGuid(),
                 Address = address,
@@ -48,8 +49,8 @@ namespace ServiceHub.Room.Testing.Service
             //Arrange
             room.Address = address;
             Guid id = room.RoomId;
-            context.Insert(room);
-            RoomController roomController = new RoomController(null,null,context);
+            context.Insert(ModelMapper.LibraryToContext(room));
+            RoomController roomController = new RoomController(null,context);
 
             //Act
             //var response = await roomController.Get();
@@ -71,8 +72,8 @@ namespace ServiceHub.Room.Testing.Service
             //Arrange
             room.Address = address;
             Guid id = room.RoomId;
-            context.Insert(room);
-            RoomController roomController = new RoomController(null, null, context);
+            context.Insert(ModelMapper.LibraryToContext(room));
+            RoomController roomController = new RoomController(null,context);
 
             var myTask = Task.Run(() => roomController.Get(id));
             var result = await myTask;
@@ -81,6 +82,23 @@ namespace ServiceHub.Room.Testing.Service
             var roomReturned = contentResult.Value as Room.Library.Models.Room;
 
             Assert.Equal(id,roomReturned.RoomId);
+        }
+
+        [Fact]
+        public async void TestControllerPost()
+        {
+            //Arrange
+            room.Address = address;
+            RoomController roomController = new RoomController(null, context);
+
+            //Act
+            var myTask = Task.Run(() => roomController.Post(room));
+            var result = await myTask;
+
+            var contentResult = result as OkObjectResult;
+            Assert.NotNull(contentResult.StatusCode);
+            int code = (int)contentResult.StatusCode;
+            Assert.InRange(code,200,300);
         }
     }
 }

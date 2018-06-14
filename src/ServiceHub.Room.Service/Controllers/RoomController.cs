@@ -3,160 +3,154 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
-
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using ServiceHub.Room.Context.Repository;
 using ServiceHub.Room.Context.Utilities;
 using System.Runtime.Serialization.Json;
 
-
-using ServiceHub.Room.Context.Repository;
-using ServiceHub.Room.Context.Utilities;
-
-
 namespace ServiceHub.Room.Service.Controllers
 {
-
-    [Route("api/Room")]
-  public class RoomController : BaseController
-  {
-
-      //private IRoomsRepository _context;
-
-      //public RoomController(ILoggerFactory loggerFactory,
-      //    IRoomsRepository context /*, IQueueClient queueClientSingleton*/)
-      //    : base(loggerFactory /*, queueClientSingleton*/)
-      //{
-      //    _context = context;
-      //}
-
-      private readonly IRoomsRepository _context;/* = new RoomContext(new RoomRepositoryMemory());*/
-
-      public RoomController(ILoggerFactory loggerFactory, IQueueClient queueClientSingleton, IRoomsRepository context)
-          : base(loggerFactory /*, queueClientSingleton*/)
-      {
-          _context = context;
-      }
-
-
-    public async Task<IActionResult> Get()
+    [Route("api/[controller]")]
+    public class RoomController : BaseController
     {
-            //return await Task.Run(() => Ok());
-        var myTask = Task.Run(() => _context.Get());
-        List<Context.Models.Room> results = await myTask;
+        private readonly RoomContext _context;
 
-        return Ok(ModelMapper.ContextToLibrary(results));
-        }
-
-    [HttpGet("{id}")]
-    public async Task<IActionResult> Get(Guid id)
-    {
-            //return await Task.Run(() => Ok());
-        var myTask = Task.Run(() => _context.GetById(id));
-        Context.Models.Room result = await myTask;
-
-        return Ok(ModelMapper.ContextToLibrary(result));
-        }
-
-    [HttpPost]
-    public async Task<IActionResult> Post([FromBody]Library.Models.Room value)
-    {
-        
-        //return await Task.Run(() => Ok());
-        if (!value.isValidState())
+        public RoomController(ILoggerFactory loggerFactory, IRoomsRepository repo) : base(loggerFactory)
         {
+            _context = new RoomContext(repo);
+        }
+
+        [HttpGet]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Library.Models.Room>))]
+        public async Task<IActionResult> Get()
+        {
+            try
+            {
+                var rooms = new List<Library.Models.Room>();
+                foreach (var r in _context.Get())
+                {
+                    rooms.Add(Context.Utilities.ModelMapper.ContextToLibrary(r));
+                }
+
+                return await Task.Run(() => Ok(rooms));
+            }
+            catch
+            {
+                return new StatusCodeResult(500);
+            }
+        }
+
+        [HttpGet]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(200, Type = typeof(Library.Models.Room))]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            try
+            {
+                Library.Models.Room room = Context.Utilities.ModelMapper.ContextToLibrary(_context.GetById(id));
+                return await Task.Run(() => Ok(room));
+            }
+            catch
+            {
+                return new StatusCodeResult(500);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] Library.Models.Room value)
+        {
+            //return await Task.Run(() => Ok());
+            if (!value.isValidState())
+            {
                 return BadRequest();
-        }
-
-        Context.Models.Room room = ModelMapper.LibraryToContext(value);
-        var myTask = Task.Run(() => _context.Insert(room));
-        await myTask;
-
-        return StatusCode(201);
-    }
-
-
-      [HttpPut]
-      public async Task<IActionResult> Put([FromBody] Library.Models.Room value)
-      {
-          if (!value.isValidState())
-          {
-              return BadRequest();
-          }
-
-          Context.Models.Room room = ModelMapper.LibraryToContext(value);
-          var myTask = Task.Run(() => _context.Update(room));
-          await myTask;
-
-          //return CreatedAtRoute("api/Room", new { Id = room.RoomId }, value);
-          return StatusCode(202);
-      }
-
-      [HttpPut("{id}")]
-    public async Task<IActionResult> Put(Guid id, [FromBody]Library.Models.Room roomMod) {
-        var ctxItem = _context.GetById(id);
-        
-        var item = ModelMapper.ContextToLibrary(ctxItem);
-
-        if (roomMod.Location != null) {
-            item.Location = roomMod.Location;
-        }
-
-        if (roomMod.Gender != null) {
-            item.Gender = roomMod.Gender;
-        }
-
-        if (roomMod.Vacancy != null) {
-            item.Vacancy = roomMod.Vacancy;
-        }
-
-        if (item.isValidState()) {
-            var newCtxItem = ModelMapper.LibraryToContext(item);
-            if (newCtxItem != null) {
-                    _context.Update(newCtxItem);
-                return Ok(item);
             }
-            else {
-                return StatusCode(500);
+
+            Context.Models.Room room = ModelMapper.LibraryToContext(value);
+            var myTask = Task.Run(() => _context.Insert(room));
+            await myTask;
+
+            return StatusCode(201);
+        }
+
+
+        [HttpPut]
+        public async Task<IActionResult> Put([FromBody] Library.Models.Room value)
+        {
+            if (!value.isValidState())
+            {
+                return BadRequest();
+            }
+
+            Context.Models.Room room = ModelMapper.LibraryToContext(value);
+            var myTask = Task.Run(() => _context.Update(room));
+            await myTask;
+
+            //return CreatedAtRoute("api/Room", new { Id = room.RoomId }, value);
+            return StatusCode(202);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(Guid id, [FromBody] Library.Models.Room roomMod)
+        {
+            var ctxItem = _context.GetById(id);
+
+            var item = ModelMapper.ContextToLibrary(ctxItem);
+
+            if (roomMod.Location != null)
+            {
+                item.Location = roomMod.Location;
+            }
+
+            if (roomMod.Gender != null)
+            {
+                item.Gender = roomMod.Gender;
+            }
+
+            if (roomMod.Vacancy != null)
+            {
+                item.Vacancy = roomMod.Vacancy;
+            }
+
+            if (item.isValidState())
+            {
+                var newCtxItem = Context.Utilities.ModelMapper.LibraryToContext(item);
+                if (newCtxItem != null)
+                {
+                    var myTask = Task.Run(() => _context.Update(newCtxItem));
+                    await myTask;
+                    return Ok(item);
+                }
+                else
+                {
+                    return StatusCode(500);
+                }
+            }
+            else
+            {
+                return BadRequest("Invalid change.");
+            }
+
+            //return await Task.Run(() => Ok()); 
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> Delete(System.Guid id)
+        {
+            try
+            {
+                var myTask = Task.Run(() => _context.Delete(id));
+                await myTask;
+                return new StatusCodeResult(200);
+            }
+            catch
+            {
+                return new StatusCodeResult(500);
             }
         }
-        else {
-            return BadRequest("Invalid change.");
-        }
-
-        //return await Task.Run(() => Ok());
-
     }
-
-    [HttpDelete]
-    public async Task<IActionResult> Delete(Guid id)
-    {
-        var myTask = Task.Run(() => _context.Delete(id));
-        await  myTask;
-        
-        return StatusCode(200);
-
-    }
-
-    protected override void UseReceiver()
-    {
-      var messageHandlerOptions = new MessageHandlerOptions(ReceiverExceptionHandler)
-      {
-        AutoComplete = false
-      };
-
-      //queueClient.RegisterMessageHandler(ReceiverMessageProcessAsync, messageHandlerOptions);
-    }
-
-    protected override void UseSender(Message message)
-    {
-      Task.Run(() =>
-        SenderMessageProcessAsync(message)
-      );
-    }
-  }
 }
