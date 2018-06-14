@@ -2,25 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
+using ServiceHub.Room.Context.Repository;
+using ServiceHub.Room.Context.Utilities;
 
-namespace ServiceHub.Room.Service.Controllers
-{
+namespace ServiceHub.Room.Service.Controllers {
+
     [Route("api/[controller]")]
-    public class RoomController : BaseController
-    {
-
-
-        //make a room context and passs it
-        //dependancy injection, takes in the concretion as argument
-        private Context.Repository.RoomContext _repo;
-
-        public RoomController(ILoggerFactory loggerFactory, IQueueClient queueClientSingleton)
-          : base(loggerFactory, queueClientSingleton) {
-            _repo = new Context.Repository.RoomContext(new Context.Repository.RoomRepositoryMemory());
+    public class RoomController : BaseController {
+        private readonly RoomContext _context;
+        public RoomController(ILoggerFactory loggerFactory, IRoomsRepository repo) : base(loggerFactory)
+        {
+            _context = new RoomContext(repo);
         }
-
         [HttpGet]
         [ProducesResponseType(500)]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Library.Models.Room>))]
@@ -151,21 +145,21 @@ namespace ServiceHub.Room.Service.Controllers
             
         }
 
-        protected override void UseReceiver()
-        {
-            var messageHandlerOptions = new MessageHandlerOptions(ReceiverExceptionHandler)
-            {
-                AutoComplete = false
-            };
+    protected override void UseReceiver()
+    {
+      var messageHandlerOptions = new MessageHandlerOptions(ReceiverExceptionHandler)
+      {
+        AutoComplete = false
+      };
 
-            queueClient.RegisterMessageHandler(ReceiverMessageProcessAsync, messageHandlerOptions);
-        }
-
-        protected override void UseSender(Message message)
-        {
-            Task.Run(() =>
-              SenderMessageProcessAsync(message)
-            );
-        }
+      queueClient.RegisterMessageHandler(ReceiverMessageProcessAsync, messageHandlerOptions);
     }
+
+    protected override void UseSender(Message message)
+    {
+      Task.Run(() =>
+        SenderMessageProcessAsync(message)
+      );
+    }
+  }
 }
