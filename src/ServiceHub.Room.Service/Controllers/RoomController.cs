@@ -86,9 +86,45 @@ namespace ServiceHub.Room.Service.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody]Library.Models.Room room)
+        public async Task<IActionResult> Put(Guid id, [FromBody]Library.Models.Room roomMod)
         {
-            return await Task.Run(() => Ok()); 
+            var ctxItem = _repo.GetById(id);
+
+            var item = Context.Utilities.ModelMapper.ContextToLibrary(ctxItem);
+
+            if (roomMod.Location != null)
+            {
+                item.Location = roomMod.Location;
+            }
+
+            if (roomMod.Gender != null)
+            {
+                item.Gender = roomMod.Gender;
+            }
+
+            if (roomMod.Vacancy != null)
+            {
+                item.Vacancy = roomMod.Vacancy;
+            }
+
+            if (item.isValidState())
+            {
+                var newCtxItem = Context.Utilities.ModelMapper.LibraryToContext(item);
+                if (newCtxItem != null)
+                {
+                    _repo.Update(newCtxItem);
+                    return Ok(item);
+                }
+                else
+                {
+                    return StatusCode(500);
+                }
+            }
+            else
+            {
+                return BadRequest("Invalid change.");
+            }
+            //return await Task.Run(() => Ok()); 
         }
 
         [HttpDelete("{id}")]
