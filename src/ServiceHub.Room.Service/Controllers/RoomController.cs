@@ -9,7 +9,8 @@ using ServiceHub.Room.Context.Utilities;
 namespace ServiceHub.Room.Service.Controllers {
 
     [Route("api/[controller]")]
-    public class RoomController : BaseController {
+    public class RoomController : BaseController
+    {
         private readonly RoomContext _context;
         public RoomController(ILoggerFactory loggerFactory, IRoomsRepository repo) : base(loggerFactory)
         {
@@ -23,7 +24,7 @@ namespace ServiceHub.Room.Service.Controllers {
             try
             {
                 var rooms = new List<Library.Models.Room>();
-                foreach (var r in _repo.Get())
+                foreach (var r in _context.Get())
                 {
                     rooms.Add(Context.Utilities.ModelMapper.ContextToLibrary(r));
                 }
@@ -33,7 +34,7 @@ namespace ServiceHub.Room.Service.Controllers {
             {
                 return new StatusCodeResult(500);
             }
-            
+
         }
 
         [HttpGet]
@@ -43,7 +44,7 @@ namespace ServiceHub.Room.Service.Controllers {
         {
             try
             {
-                Library.Models.Room room = Context.Utilities.ModelMapper.ContextToLibrary(_repo.GetById(id));
+                Library.Models.Room room = Context.Utilities.ModelMapper.ContextToLibrary(_context.GetById(id));
                 return await Task.Run(() => Ok(room));
             }
             catch
@@ -57,7 +58,7 @@ namespace ServiceHub.Room.Service.Controllers {
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var myTask = Task.Run(() => _repo.GetById(id)); //needs new get overload that takes id
+            var myTask = Task.Run(() => _context.GetById(id)); //needs new get overload that takes id
             ServiceHub.Room.Library.Models.Room result = Context.Utilities.ModelMapper.ContextToLibrary(await myTask);
             //this.HttpContext.Response.StatusCode = 200;
             return new ObjectResult(result);
@@ -74,7 +75,7 @@ namespace ServiceHub.Room.Service.Controllers {
                     return BadRequest();
                 }
                 Context.Models.Room val = Context.Utilities.ModelMapper.LibraryToContext(room);
-                var myTask = Task.Run(() => _repo.Insert(val));
+                var myTask = Task.Run(() => _context.Insert(val));
                 await myTask;
                 return StatusCode(201);
             }
@@ -88,9 +89,9 @@ namespace ServiceHub.Room.Service.Controllers {
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(Guid id, [FromBody]Library.Models.Room roomMod)
         {
-            var ctxItem = _repo.GetById(id);
+            var ctxItem = _context.GetById(id);
             var item = Context.Utilities.ModelMapper.ContextToLibrary(ctxItem);
-            
+
             if (roomMod.Location != null)
             {
                 item.Location = roomMod.Location;
@@ -111,7 +112,7 @@ namespace ServiceHub.Room.Service.Controllers {
                 var newCtxItem = Context.Utilities.ModelMapper.LibraryToContext(item);
                 if (newCtxItem != null)
                 {
-                    var myTask = Task.Run(() => _repo.Update(newCtxItem));
+                    var myTask = Task.Run(() => _context.Update(newCtxItem));
                     await myTask;
                     return Ok(item);
                 }
@@ -134,7 +135,7 @@ namespace ServiceHub.Room.Service.Controllers {
         {
             try
             {
-                var myTask = Task.Run(() => _repo.Delete(id));
+                var myTask = Task.Run(() => _context.Delete(id));
                 await myTask;
                 return new StatusCodeResult(200);
             }
@@ -142,24 +143,7 @@ namespace ServiceHub.Room.Service.Controllers {
             {
                 return new StatusCodeResult(500);
             }
-            
+
         }
-
-    protected override void UseReceiver()
-    {
-      var messageHandlerOptions = new MessageHandlerOptions(ReceiverExceptionHandler)
-      {
-        AutoComplete = false
-      };
-
-      queueClient.RegisterMessageHandler(ReceiverMessageProcessAsync, messageHandlerOptions);
     }
-
-    protected override void UseSender(Message message)
-    {
-      Task.Run(() =>
-        SenderMessageProcessAsync(message)
-      );
-    }
-  }
 }
