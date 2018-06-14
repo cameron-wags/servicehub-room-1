@@ -95,9 +95,8 @@ namespace ServiceHub.Room.Service.Controllers
         public async Task<IActionResult> Put(Guid id, [FromBody]Library.Models.Room roomMod)
         {
             var ctxItem = _repo.GetById(id);
-
             var item = Context.Utilities.ModelMapper.ContextToLibrary(ctxItem);
-
+            
             if (roomMod.Location != null)
             {
                 item.Location = roomMod.Location;
@@ -118,7 +117,8 @@ namespace ServiceHub.Room.Service.Controllers
                 var newCtxItem = Context.Utilities.ModelMapper.LibraryToContext(item);
                 if (newCtxItem != null)
                 {
-                    _repo.Update(newCtxItem);
+                    var myTask = Task.Run(() => _repo.Update(newCtxItem));
+                    await myTask;
                     return Ok(item);
                 }
                 else
