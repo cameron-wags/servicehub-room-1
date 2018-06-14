@@ -75,8 +75,14 @@ namespace ServiceHub.Room.Service.Controllers
         {
             try
             {
-                var myTask = Task.Run(() => _repo.Insert(Context.Utilities.ModelMapper.LibraryToContext(room) ));
-                return StatusCode(200);
+                if (!room.isValidState())
+                {
+                    return BadRequest();
+                }
+                Context.Models.Room val = Context.Utilities.ModelMapper.LibraryToContext(room);
+                var myTask = Task.Run(() => _repo.Insert(val));
+                await myTask;
+                return StatusCode(201);
             }
             catch
             {
