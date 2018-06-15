@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Web.Http.Results;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using ServiceHub.Room.Context.Models;
 using ServiceHub.Room.Service.Controllers;
 using ServiceHub.Room.Context.Repository;
 using ServiceHub.Room.Context.Utilities;
@@ -55,7 +52,6 @@ namespace ServiceHub.Room.Testing.Service
             RoomController roomController = new RoomController(new LoggerFactory(), context);
 
             //Act
-            //var response = await roomController.Get();
             var myTask = Task.Run(() => roomController.Get());
             var result = await myTask;
             var contentResult = result as OkObjectResult;
@@ -99,11 +95,11 @@ namespace ServiceHub.Room.Testing.Service
             var result = await myTask;
            
 
-            var contentResult = result as StatusCodeResult;
-            //var contentResult = result as OkObjectResult;
+            var contentResult = result as BadRequestObjectResult;
+            
             Assert.NotNull(contentResult);
             int code = (int)contentResult.StatusCode;
-            Assert.InRange(code, 500, 599);
+            Assert.InRange(code, 400, 499);
         }
 
         [Fact]
@@ -135,9 +131,9 @@ namespace ServiceHub.Room.Testing.Service
             var myTask = Task.Run(() => roomController.Post(room));
             var result = await myTask;
 
-            var contentResult = result as StatusCodeResult;
+            var contentResult = result as BadRequestObjectResult;
             Assert.NotNull(contentResult);
-            var code = contentResult.StatusCode;
+            var code = (int)contentResult.StatusCode;
             //Invalid input is a client side fault which should yeild a 4xx status code
             Assert.InRange(code, 400, 499);
         }
@@ -174,8 +170,7 @@ namespace ServiceHub.Room.Testing.Service
 
             var myTask = Task.Run(() => roomController.Put(room.RoomId,room));
             var result = await myTask;
-
-            //var contentResult = result as StatusCodeResult;
+            
             var contentResult = result as OkObjectResult;
             Assert.NotNull(contentResult);
             int code = (int)contentResult.StatusCode;
@@ -195,9 +190,7 @@ namespace ServiceHub.Room.Testing.Service
             //Act
             var myTask = Task.Run(() => roomController.Put(room));
             var result = await myTask;
-
-            //var contentResult = result as StatusCodeResult;
-            //var contentResult = result as OkObjectResult;
+            
             var contentResult = result as BadRequestObjectResult;
             Assert.NotNull(contentResult);
             var code = (int)contentResult.StatusCode;
@@ -218,7 +211,6 @@ namespace ServiceHub.Room.Testing.Service
             var result = await myTask;
 
             var contentResult = result as StatusCodeResult;
-            //var contentResult = result as OkObjectResult;
             Assert.NotNull(contentResult);
             int code = (int)contentResult.StatusCode;            
             Assert.InRange(code, 200, 300);
@@ -238,7 +230,6 @@ namespace ServiceHub.Room.Testing.Service
             var result = await myTask;
 
             var contentResult = result as BadRequestObjectResult;
-            //var contentResult = result as OkObjectResult;
             Assert.NotNull(contentResult);
             int code = (int)contentResult.StatusCode;
             //Invalid input is a client side fault which should yeild a 4xx status code
@@ -258,7 +249,6 @@ namespace ServiceHub.Room.Testing.Service
             var result = await myTask;
 
             var contentResult = result as BadRequestObjectResult;
-            //var contentResult = result as OkObjectResult;
             Assert.NotNull(contentResult);
             int code = (int)contentResult.StatusCode;
             //Invalid input is a client side fault which should yeild a 4xx status code

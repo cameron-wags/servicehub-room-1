@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using MongoDB.Bson;
 using Xunit;
-using ServiceHub.Room.Context;
 using ServiceHub.Room.Context.Repository;
 using ServiceHub.Room.Context.Models;
-using Newtonsoft.Json;
 
 namespace ServiceHub.Room.Testing.Service
 {
@@ -57,8 +55,7 @@ namespace ServiceHub.Room.Testing.Service
             room1.Occupancy = room.Occupancy;
             room1.Vacancy = room.Vacancy;
             room1.Gender = room.Gender;
-
-           
+            
             var obj1ToJSON = room.ToJson();
             var obj2ToJSON = room.ToJson();
             Assert.Equal(obj1ToJSON,obj2ToJSON);
@@ -93,9 +90,7 @@ namespace ServiceHub.Room.Testing.Service
 
             Assert.Equal(room.RoomId, context.Get()[0].RoomId);
         }
-
-
-
+        
         [Fact]
         public void TestGetAll()
         {
@@ -236,8 +231,7 @@ namespace ServiceHub.Room.Testing.Service
                 Gender = "M"
             };
             context.Insert(room);
-
-            //room.Vacancy = 0;
+            
             context.Delete(room.RoomId);
 
             Assert.Empty(context.roomList);
