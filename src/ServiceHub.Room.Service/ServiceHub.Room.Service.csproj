@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ServiceHub.Room.Context\ServiceHub.Room.Context.csproj" />
     <ProjectReference Include="..\ServiceHub.Room.Library\ServiceHub.Room.Library.csproj" />
+	<ProjectReference Include="..\ServiceHub.Room.Context\ServiceHub.Room.Context.csproj" />
   </ItemGroup>
 
 </Project>
