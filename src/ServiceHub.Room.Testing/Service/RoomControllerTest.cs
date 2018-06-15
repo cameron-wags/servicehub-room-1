@@ -114,8 +114,9 @@ namespace ServiceHub.Room.Testing.Service
 
             var myTask = Task.Run(() => roomController.Put(room));
             var result = await myTask;
-            
-            var contentResult = result as StatusCodeResult;
+
+            //var contentResult = result as StatusCodeResult;
+            var contentResult = result as OkObjectResult;
             Assert.NotNull(result);
             int code = (int)contentResult.StatusCode;
             Assert.InRange(code, 200, 300);
