@@ -43,7 +43,7 @@ namespace ServiceHub.Room.Context.Repository
 
         public void Update(Models.Room room)
         {
-            int index = roomList.IndexOf(room);
+            int index = roomList.IndexOf(roomList.Single(x => x.RoomId == room.RoomId));
             if (index >= 0)
             roomList[index] = room;
         }
