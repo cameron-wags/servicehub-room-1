@@ -183,6 +183,14 @@ namespace ServiceHub.Room.Service.Controllers
             //todo not verified working, better error handling needed
             try
             {
+                if (id == Guid.Empty)
+                {
+                    return await Task.Run(() => BadRequest("Item must have an Identifier"));
+                }
+                if (_context.GetById(id) == null)
+                {
+                    return await Task.Run(() => BadRequest("Item not in Database"));
+                }
                 var myTask = Task.Run(() => _context.Delete(id));
                 await myTask;
                 return new StatusCodeResult(200);

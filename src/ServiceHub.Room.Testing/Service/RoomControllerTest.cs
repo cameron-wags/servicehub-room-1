@@ -224,8 +224,47 @@ namespace ServiceHub.Room.Testing.Service
             Assert.InRange(code, 200, 300);
             Assert.Empty(context.roomList);
         }
+        [Fact]
+        public async void TestControllerDeleteWithNullModel()
+        {
+            //Arrange
+            RoomController roomController = new RoomController(new LoggerFactory(), context);
+            room.Address = address;
+            context.Insert(ModelMapper.LibraryToContext(room));
 
-        
+            Assert.NotEmpty(context.roomList);
+            var badId = Guid.Empty;
+            var myTask = Task.Run(() => roomController.Delete(badId));
+            var result = await myTask;
+
+            var contentResult = result as BadRequestObjectResult;
+            //var contentResult = result as OkObjectResult;
+            Assert.NotNull(contentResult);
+            int code = (int)contentResult.StatusCode;
+            //Invalid input is a client side fault which should yeild a 4xx status code
+            Assert.InRange(code, 400, 499);
+        }
+        [Fact]
+        public async void TestControllerDeleteWithModelNotInData()
+        {
+            //Arrange
+            RoomController roomController = new RoomController(new LoggerFactory(), context);
+            room.Address = address;
+            context.Insert(ModelMapper.LibraryToContext(room));
+
+            Assert.NotEmpty(context.roomList);
+            var badId = Guid.NewGuid();
+            var myTask = Task.Run(() => roomController.Delete(badId));
+            var result = await myTask;
+
+            var contentResult = result as BadRequestObjectResult;
+            //var contentResult = result as OkObjectResult;
+            Assert.NotNull(contentResult);
+            int code = (int)contentResult.StatusCode;
+            //Invalid input is a client side fault which should yeild a 4xx status code
+            Assert.InRange(code, 400, 499);
+        }
+
     }
 }
 
