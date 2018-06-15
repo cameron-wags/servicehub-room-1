@@ -1,18 +1,14 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MongoDB.Bson;
-using MongoDB.Bson.IO;
 using ServiceHub.Room.Context.Repository;
 using ServiceHub.Room.Context.Utilities;
-using System.Runtime.Serialization.Json;
 
 namespace ServiceHub.Room.Service.Controllers
 {
-    [Route("api/[controller]")]
+
+    [Route("api/Rooms")]
     public class RoomController : BaseController
     {
         private readonly RoomContext _context;
@@ -22,18 +18,18 @@ namespace ServiceHub.Room.Service.Controllers
             _context = new RoomContext(repo);
         }
 
+        /// <summary>
+        /// Gets all records.
+        /// </summary>
+        /// <returns>All records, error code if failure occurs.</returns>
         [HttpGet]
-        [ProducesResponseType(500)]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Library.Models.Room>))]
         public async Task<IActionResult> Get()
         {
             try
             {
-                var rooms = new List<Library.Models.Room>();
-                foreach (var r in _context.Get())
-                {
-                    rooms.Add(Context.Utilities.ModelMapper.ContextToLibrary(r));
-                }
+                var ctxrooms = _context.Get();
+
+                var rooms = ModelMapper.ContextToLibrary(ctxrooms);
 
                 return await Task.Run(() => Ok(rooms));
             }
@@ -43,14 +39,27 @@ namespace ServiceHub.Room.Service.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets one record by Guid.
+        /// </summary>
+        /// <param name="id">RoomId to search for.</param>
+        /// <returns>A matching item if found, error otherwise.</returns>
         [HttpGet]
-        [ProducesResponseType(500)]
-        [ProducesResponseType(200, Type = typeof(Library.Models.Room))]
+        [Route("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
+            //todo better error handling needed
             try
             {
-                Library.Models.Room room = Context.Utilities.ModelMapper.ContextToLibrary(_context.GetById(id));
+                var result = _context.GetById(id);
+
+                var room = ModelMapper.ContextToLibrary(result);
+
+                if (room == null)
+                {
+                    return StatusCode(500);
+                }
+
                 return await Task.Run(() => Ok(room));
             }
             catch
@@ -59,69 +68,77 @@ namespace ServiceHub.Room.Service.Controllers
             }
         }
 
+        /// <summary>
+        /// Creates a new record.
+        /// </summary>
+        /// <param name="value">A valid Room model.</param>
+        /// <returns>Success status code if success or a failing status code if the record failed to create.</returns>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Library.Models.Room value)
         {
-            //return await Task.Run(() => Ok());
+            //todo not verified working, better error handling needed
             if (!value.isValidState())
             {
                 return BadRequest();
             }
 
-            Context.Models.Room room = ModelMapper.LibraryToContext(value);
+            var room = ModelMapper.LibraryToContext(value);
             var myTask = Task.Run(() => _context.Insert(room));
             await myTask;
 
             return StatusCode(201);
         }
 
-
+        /// <summary>
+        /// Updates an existing record.
+        /// </summary>
+        /// <param name="roomMod">A Room model with its RoomId and properties to be modified set.</param>
+        /// <returns>The updated item if the update is successful, or an appropriate error code if the update fails.</returns>
         [HttpPut]
-        public async Task<IActionResult> Put([FromBody] Library.Models.Room value)
+        public async Task<IActionResult> Put([FromBody] Library.Models.Room roomMod)
         {
-            if (!value.isValidState())
+            if (roomMod == null || roomMod.RoomId == Guid.Empty)
             {
-                return BadRequest();
+                return await Task.Run(() => BadRequest("Identifier required for record editing."));
             }
 
-            Context.Models.Room room = ModelMapper.LibraryToContext(value);
-            var myTask = Task.Run(() => _context.Update(room));
-            await myTask;
-
-            //return CreatedAtRoute("api/Room", new { Id = room.RoomId }, value);
-            return StatusCode(202);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(Guid id, [FromBody] Library.Models.Room roomMod)
-        {
-            var ctxItem = _context.GetById(id);
+            var ctxItem = _context.GetById(roomMod.RoomId);
 
             var item = ModelMapper.ContextToLibrary(ctxItem);
+
+            var changeFlag = false;
 
             if (roomMod.Location != null)
             {
                 item.Location = roomMod.Location;
+                changeFlag = true;
             }
 
             if (roomMod.Gender != null)
             {
                 item.Gender = roomMod.Gender;
+                changeFlag = true;
             }
 
             if (roomMod.Vacancy != null)
             {
                 item.Vacancy = roomMod.Vacancy;
+                changeFlag = true;
+            }
+
+            if (!changeFlag)
+            {
+                return await Task.Run(() => BadRequest("Trying to modify a read-only value."));
             }
 
             if (item.isValidState())
             {
-                var newCtxItem = Context.Utilities.ModelMapper.LibraryToContext(item);
+                var newCtxItem = ModelMapper.LibraryToContext(item);
                 if (newCtxItem != null)
                 {
                     var myTask = Task.Run(() => _context.Update(newCtxItem));
                     await myTask;
-                    return Ok(item);
+                    return await Task.Run(() => Ok(item));
                 }
                 else
                 {
@@ -130,17 +147,40 @@ namespace ServiceHub.Room.Service.Controllers
             }
             else
             {
-                return BadRequest("Invalid change.");
+                return await Task.Run(() => BadRequest("Edit would make the record invalid."));
             }
-
-            //return await Task.Run(() => Ok()); 
         }
 
-        [HttpDelete("{id}")]
-        [ProducesResponseType(500)]
-        [ProducesResponseType(200)]
-        public async Task<IActionResult> Delete(System.Guid id)
+        /// <summary>
+        /// Updates an existing record.
+        /// </summary>
+        /// <param name="id">Route parameter. The Guid of the item to be looked up and modified.</param>
+        /// <param name="roomMod">A Room model with the properties to be modified set.</param>
+        /// <returns>The updated record if successful, an appropriate error code if the update fails.</returns>
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<IActionResult> Put(Guid id, [FromBody] Library.Models.Room roomMod)
         {
+            if (id == Guid.Empty || roomMod == null)
+            {
+                return await Task.Run(() => BadRequest("Identifier required for record editing."));
+            }
+
+            roomMod.RoomId = id;
+
+            return await Task.Run(() => Put(roomMod));
+        }
+
+        /// <summary>
+        /// Deletes a record by Guid.
+        /// </summary>
+        /// <param name="id">Guid of the record to be deleted.</param>
+        /// <returns>Success code if the item was deleted, a failure status code if the delete failed.</returns>
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            //todo not verified working, better error handling needed
             try
             {
                 var myTask = Task.Run(() => _context.Delete(id));
@@ -153,4 +193,5 @@ namespace ServiceHub.Room.Service.Controllers
             }
         }
     }
+
 }
