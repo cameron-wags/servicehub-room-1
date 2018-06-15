@@ -41,6 +41,10 @@ namespace ServiceHub.Room.Context.Repository
             return room;
         }
 
+        /// <summary>
+        /// Updates a Models.Room object. If no room exists based on RoomId then no room is updated.
+        /// </summary>
+        /// <param name="room"></param>
         public void Update(Models.Room room)
         {
             int index = roomList.IndexOf(roomList.Single(x => x.RoomId == room.RoomId));
@@ -48,6 +52,10 @@ namespace ServiceHub.Room.Context.Repository
             roomList[index] = room;
         }
 
+        /// <summary>
+        /// Deletes a Models.Room object from the list based on the Guid.
+        /// </summary>
+        /// <param name="id"></param>
         public void Delete(Guid id)
         {
             roomList.Remove(roomList.Find(x => x.RoomId == id));
