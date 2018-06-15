@@ -4,6 +4,7 @@ using System.Text;
 using System.Web.Http.Results;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using ServiceHub.Room.Context.Models;
 using ServiceHub.Room.Service.Controllers;
 using ServiceHub.Room.Context.Repository;
@@ -50,7 +51,7 @@ namespace ServiceHub.Room.Testing.Service
             room.Address = address;
             Guid id = room.RoomId;
             context.Insert(ModelMapper.LibraryToContext(room));
-            RoomController roomController = new RoomController(null,context);
+            RoomController roomController = new RoomController(new LoggerFactory(), context);
 
             //Act
             //var response = await roomController.Get();
@@ -73,7 +74,7 @@ namespace ServiceHub.Room.Testing.Service
             room.Address = address;
             Guid id = room.RoomId;
             context.Insert(ModelMapper.LibraryToContext(room));
-            RoomController roomController = new RoomController(null,context);
+            RoomController roomController = new RoomController(new LoggerFactory(), context);
 
             var myTask = Task.Run(() => roomController.Get(id));
             var result = await myTask;
@@ -89,7 +90,7 @@ namespace ServiceHub.Room.Testing.Service
         {
             //Arrange
             room.Address = address;
-            RoomController roomController = new RoomController(null, context);
+            RoomController roomController = new RoomController(new LoggerFactory(), context);
 
             //Act
             var myTask = Task.Run(() => roomController.Post(room));
