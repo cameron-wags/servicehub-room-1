@@ -205,10 +205,10 @@ namespace ServiceHub.Room.Testing.Service
             };
             context.Insert(room);
 
-            room.Vacancy = 0;
+            room.Location = "Dallas";
             context.Update(room);
 
-            Assert.Equal(0,context.GetById(room.RoomId).Vacancy);
+            Assert.Equal("Dallas",context.GetById(room.RoomId).Location);
         }
 
         [Fact]
