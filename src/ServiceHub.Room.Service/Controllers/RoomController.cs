@@ -35,7 +35,7 @@ namespace ServiceHub.Room.Service.Controllers
             }
             catch
             {
-                return new StatusCodeResult(500);
+                return await Task.Run(() => StatusCode(500));
             }
         }
 
@@ -48,7 +48,11 @@ namespace ServiceHub.Room.Service.Controllers
         [Route("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            //todo better error handling needed
+            if (id == Guid.Empty)
+            {
+                return await Task.Run(() => BadRequest("Cannot get with empty Guid."));
+            }
+
             try
             {
                 var result = _context.GetById(id);
@@ -57,14 +61,14 @@ namespace ServiceHub.Room.Service.Controllers
 
                 if (room == null)
                 {
-                    return StatusCode(500);
+                    return await Task.Run(() => StatusCode(500));
                 }
 
                 return await Task.Run(() => Ok(room));
             }
             catch
             {
-                return new StatusCodeResult(500);
+                return await Task.Run(() => BadRequest($"Resource does not exist under RoomId: {id}"));
             }
         }
 
@@ -76,17 +80,39 @@ namespace ServiceHub.Room.Service.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Library.Models.Room value)
         {
-            //todo not verified working, better error handling needed
+            if (value == null)
+            {
+                return await Task.Run(() => BadRequest("Incorrect model."));
+            }
+
+            if (value.RoomId == Guid.Empty)
+            {
+                value.RoomId = Guid.NewGuid();
+            }
+        
             if (!value.isValidState())
             {
-                return BadRequest();
+                return await Task.Run(() => BadRequest("Complete model required for insertions."));
             }
 
             var room = ModelMapper.LibraryToContext(value);
-            var myTask = Task.Run(() => _context.Insert(room));
-            await myTask;
 
-            return StatusCode(201);
+            if (room == null)
+            {
+                return await Task.Run(() => StatusCode(500));
+            }
+
+            try
+            {
+                var myTask = Task.Run(() => _context.Insert(room));
+                await myTask;
+            }
+            catch
+            {
+                return await Task.Run(() => BadRequest("Cannot insert duplicate record."));
+            }
+
+            return await Task.Run(() => StatusCode(201));
         }
 
         /// <summary>
@@ -142,7 +168,7 @@ namespace ServiceHub.Room.Service.Controllers
                 }
                 else
                 {
-                    return StatusCode(500);
+                    return await Task.Run(() => StatusCode(500));
                 }
             }
             else
@@ -180,25 +206,34 @@ namespace ServiceHub.Room.Service.Controllers
         [Route("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            //todo not verified working, better error handling needed
+            if (id == Guid.Empty)
+            {
+                return await Task.Run(() => BadRequest("Item must have an Identifier"));
+            }
+
             try
             {
-                if (id == Guid.Empty)
-                {
-                    return await Task.Run(() => BadRequest("Item must have an Identifier"));
-                }
                 if (_context.GetById(id) == null)
                 {
                     return await Task.Run(() => BadRequest("Item not in Database"));
                 }
-                var myTask = Task.Run(() => _context.Delete(id));
-                await myTask;
-                return new StatusCodeResult(200);
             }
             catch
             {
-                return new StatusCodeResult(500);
+                return await Task.Run(() => BadRequest("Item not in Database"));
             }
+
+            try
+            {
+                var myTask = Task.Run(() => _context.Delete(id));
+                await myTask;
+            }
+            catch
+            {
+                return await Task.Run(() => StatusCode(500));
+            }
+
+            return await Task.Run(() => StatusCode(200));
         }
     }
 
