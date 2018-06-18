@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ServiceHub.Room.Service
 {
@@ -9,7 +10,15 @@ namespace ServiceHub.Room.Service
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            var building = BuildWebHost(args);
+
+            using (var scope = building.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                SeedData.Initialize(services);
+            }
+
+            building.Run();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
