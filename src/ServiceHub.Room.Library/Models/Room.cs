@@ -55,7 +55,7 @@ namespace ServiceHub.Room.Library.Models
         public bool isValidState()
         {
             if (RoomId == Guid.Empty) { return false; }
-            if (String.IsNullOrEmpty(Location) || Location?.Length > 255 || Location?.Length <= 0) { return false; }
+            if (string.IsNullOrEmpty(Location) || Location?.Length > 255 || Location?.Length <= 0) { return false; }
             if (Address == null || !Address.isValidState()) { return false; }
             if (Occupancy == null || Occupancy <= 0) { return false; }
             if (Vacancy == null || Vacancy > Occupancy || Vacancy < 0) { return false; }
