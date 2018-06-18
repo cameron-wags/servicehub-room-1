@@ -37,6 +37,9 @@ namespace ServiceHub.Room.Service
         {
             loggerFactory.AddApplicationInsights(app.ApplicationServices);
 
+            ServiceLogging.Configure("service");
+            ServiceLogging.LoggerFactory = loggerFactory;
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

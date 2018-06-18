@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,11 +12,11 @@ namespace ServiceHub.Room.Service.Controllers
     [Route("api/Rooms")]
     public class RoomController : BaseController
     {
-        private readonly RoomContext _context;
+        private readonly IRoomsRepository _context;
 
         public RoomController(ILoggerFactory loggerFactory, IRoomsRepository repo) : base(loggerFactory)
         {
-            _context = new RoomContext(repo);
+            _context = repo;
         }
 
         /// <summary>
@@ -25,18 +26,26 @@ namespace ServiceHub.Room.Service.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
+            List<Context.Models.Room> ctxRooms;
             try
             {
-                var ctxrooms = _context.Get();
-
-                var rooms = ModelMapper.ContextToLibrary(ctxrooms);
-
-                return await Task.Run(() => Ok(rooms));
+                ctxRooms = await _context.GetAsync();
             }
-            catch
+            catch(Exception e)
             {
-                return new StatusCodeResult(500);
+                logger.LogError(e, "No rooms were found in the database.", null);
+                return StatusCode(500);
             }
+
+            var rooms = ModelMapper.ContextToLibrary(ctxRooms);
+
+            if (rooms == null)
+            {
+                logger.LogError("Rooms pulled from database cannot be converted to a room model.", null);
+                return StatusCode(500);
+            }
+
+            return Ok(rooms);
         }
 
         /// <summary>
@@ -45,27 +54,33 @@ namespace ServiceHub.Room.Service.Controllers
         /// <param name="id">RoomId to search for.</param>
         /// <returns>A matching item if found, error otherwise.</returns>
         [HttpGet]
-        [Route("{id}")]
+        [Route("{id}", Name = "GetById")]
         public async Task<IActionResult> Get(Guid id)
         {
-            //todo better error handling needed
+            if (id == Guid.Empty)
+            {
+                return BadRequest("Cannot get with empty Guid.");
+            }
+
+            Context.Models.Room result;
             try
             {
-                var result = _context.GetById(id);
-
-                var room = ModelMapper.ContextToLibrary(result);
-
-                if (room == null)
-                {
-                    return StatusCode(500);
-                }
-
-                return await Task.Run(() => Ok(room));
+                result = await _context.GetByIdAsync(id);
             }
             catch
             {
-                return new StatusCodeResult(500);
+                return NotFound($"Resource does not exist under RoomId: {id}");
             }
+
+            var room = ModelMapper.ContextToLibrary(result);
+
+            if (room == null)
+            {
+                logger.LogError("Room pulled from database cannot be converted to a room model.", null);
+                return StatusCode(500);
+            }
+
+            return Ok(room);
         }
 
         /// <summary>
@@ -76,17 +91,39 @@ namespace ServiceHub.Room.Service.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Library.Models.Room value)
         {
-            //todo not verified working, better error handling needed
+            if (value == null)
+            {
+                return BadRequest("Incorrect model.");
+            }
+
+            if (value.RoomId == Guid.Empty)
+            {
+                value.RoomId = Guid.NewGuid();
+            }
+        
             if (!value.isValidState())
             {
-                return BadRequest();
+                return BadRequest("Complete model required for insertions.");
             }
 
             var room = ModelMapper.LibraryToContext(value);
-            var myTask = Task.Run(() => _context.Insert(room));
-            await myTask;
 
-            return StatusCode(201);
+            if (room == null)
+            {
+                logger.LogError("Room model cannot be converted to a room valid to be inserted into the database.", null);
+                return StatusCode(500);
+            }
+
+            try
+            {
+                await _context.InsertAsync(room);
+            }
+            catch
+            {
+                return BadRequest("Cannot insert duplicate record.");
+            }
+            
+            return CreatedAtRoute("GetById", new {id = value.RoomId}, value);
         }
 
         /// <summary>
@@ -97,14 +134,33 @@ namespace ServiceHub.Room.Service.Controllers
         [HttpPut]
         public async Task<IActionResult> Put([FromBody] Library.Models.Room roomMod)
         {
-            if (roomMod == null || roomMod.RoomId == Guid.Empty)
+            if (roomMod == null)
             {
-                return await Task.Run(() => BadRequest("Identifier required for record editing."));
+                return BadRequest("Incorrect model.");
             }
 
-            var ctxItem = _context.GetById(roomMod.RoomId);
-
+            if (roomMod.RoomId == Guid.Empty)
+            {
+                return BadRequest("Identifier required for record editing.");
+            }
+            
+            Context.Models.Room ctxItem;
+            try
+            {
+                ctxItem = await _context.GetByIdAsync(roomMod.RoomId);
+            }
+            catch
+            {
+                return NotFound($"Resource does not exist under RoomId: {roomMod.RoomId}");
+            }
+            
             var item = ModelMapper.ContextToLibrary(ctxItem);
+
+            if (item == null)
+            {
+                logger.LogError("Room pulled from database cannot be converted to a room model", null);
+                return StatusCode(500);
+            }
 
             var changeFlag = false;
 
@@ -128,7 +184,7 @@ namespace ServiceHub.Room.Service.Controllers
 
             if (!changeFlag)
             {
-                return await Task.Run(() => BadRequest("Trying to modify a read-only value."));
+                return BadRequest("Trying to modify a read-only value.");
             }
 
             if (item.isValidState())
@@ -136,19 +192,28 @@ namespace ServiceHub.Room.Service.Controllers
                 var newCtxItem = ModelMapper.LibraryToContext(item);
                 if (newCtxItem != null)
                 {
-                    var myTask = Task.Run(() => _context.Update(newCtxItem));
-                    await myTask;
-                    return await Task.Run(() => Ok(item));
+                    try
+                    {
+                        await _context.UpdateAsync(newCtxItem);
+                    }
+                    catch(Exception e)
+                    {
+                        logger.LogError(e, "Room model cannot update a room within the database.", null);
+                        return StatusCode(500);
+                    }
                 }
                 else
                 {
+                    logger.LogError("Room model is invalid after being converted to a room in the database.", null);
                     return StatusCode(500);
                 }
             }
             else
             {
-                return await Task.Run(() => BadRequest("Edit would make the record invalid."));
+                return BadRequest("Edit would make the record invalid.");
             }
+
+            return NoContent();
         }
 
         /// <summary>
@@ -161,14 +226,19 @@ namespace ServiceHub.Room.Service.Controllers
         [Route("{id}")]
         public async Task<IActionResult> Put(Guid id, [FromBody] Library.Models.Room roomMod)
         {
-            if (id == Guid.Empty || roomMod == null)
+            if (id == Guid.Empty)
             {
-                return await Task.Run(() => BadRequest("Identifier required for record editing."));
+                return BadRequest("Identifier required for record editing.");
+            }
+
+            if (roomMod == null)
+            {
+                return BadRequest("Incorrect model.");
             }
 
             roomMod.RoomId = id;
-
-            return await Task.Run(() => Put(roomMod));
+            
+            return await Put(roomMod);
         }
 
         /// <summary>
@@ -180,18 +250,36 @@ namespace ServiceHub.Room.Service.Controllers
         [Route("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            //todo not verified working, better error handling needed
+            if (id == Guid.Empty)
+            {
+                return BadRequest("Item must have an Identifier");
+            }
+
             try
             {
-                var myTask = Task.Run(() => _context.Delete(id));
-                await myTask;
-                return new StatusCodeResult(200);
+                var item = await _context.GetByIdAsync(id);
+
+                if(item == null)
+                {
+                    return NotFound("Item not in Database");
+                }
             }
             catch
             {
-                return new StatusCodeResult(500);
+                return NotFound("Item not in Database");
             }
+
+            try
+            {
+                await _context.DeleteAsync(id);
+            }
+            catch(Exception e)
+            {
+                logger.LogError(e, "Room trying to be deleted from database could not be deleted.", null);
+                return StatusCode(500);
+            }
+
+            return NoContent();
         }
     }
-
 }
