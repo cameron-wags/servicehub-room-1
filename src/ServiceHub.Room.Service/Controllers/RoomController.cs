@@ -33,7 +33,7 @@ namespace ServiceHub.Room.Service.Controllers
             }
             catch(Exception e)
             {
-                logger.LogError(e, "No rooms in database", null);
+                logger.LogError(e, "No rooms were found in the database.", null);
                 return StatusCode(500);
             }
 
@@ -41,7 +41,7 @@ namespace ServiceHub.Room.Service.Controllers
 
             if (rooms == null)
             {
-                logger.LogError("Rooms pulled from database cannot be converted to a room model", null);
+                logger.LogError("Rooms pulled from database cannot be converted to a room model.", null);
                 return StatusCode(500);
             }
 
@@ -76,7 +76,7 @@ namespace ServiceHub.Room.Service.Controllers
 
             if (room == null)
             {
-                logger.LogError("Room pulled from database cannot be converted to a room model", null);
+                logger.LogError("Room pulled from database cannot be converted to a room model.", null);
                 return StatusCode(500);
             }
 
@@ -110,7 +110,7 @@ namespace ServiceHub.Room.Service.Controllers
 
             if (room == null)
             {
-                logger.LogError("Room pulled from database cannot be converted to a room model", null);
+                logger.LogError("Room model cannot be converted to a room valid to be inserted into the database.", null);
                 return StatusCode(500);
             }
 
@@ -198,13 +198,13 @@ namespace ServiceHub.Room.Service.Controllers
                     }
                     catch(Exception e)
                     {
-                        logger.LogError(e, "Room model cannot be update a room within the database", null);
+                        logger.LogError(e, "Room model cannot update a room within the database.", null);
                         return StatusCode(500);
                     }
                 }
                 else
                 {
-                    logger.LogError("Room in database trying to be updated cannot be found", null);
+                    logger.LogError("Room model is invalid after being converted to a room in the database.", null);
                     return StatusCode(500);
                 }
             }
