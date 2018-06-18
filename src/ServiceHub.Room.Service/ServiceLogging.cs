@@ -24,7 +24,7 @@ namespace ServiceHub.Room.Service
                 return _factory;
             }
 
-            set { _factory = value; }
+            set => _factory = value;
         }
 
         public static ILogger Create()
