@@ -119,7 +119,7 @@ namespace ServiceHub.Room.Service.Controllers
                 return BadRequest("Cannot insert duplicate record.");
             }
 
-            return CreatedAtRoute("Get", new {id = value.RoomId}, value);
+            return CreatedAtRoute("Rooms", new {id = value.RoomId}, value);
         }
 
         /// <summary>
