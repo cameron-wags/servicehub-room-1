@@ -31,8 +31,9 @@ namespace ServiceHub.Room.Service.Controllers
             {
                 ctxRooms = await _context.GetAsync();
             }
-            catch
+            catch(Exception e)
             {
+                logger.LogError(e, "No rooms in database", null);
                 return StatusCode(500);
             }
 
@@ -40,6 +41,7 @@ namespace ServiceHub.Room.Service.Controllers
 
             if (rooms == null)
             {
+                logger.LogError("Rooms pulled from database cannot be converted to a room model", null);
                 return StatusCode(500);
             }
 
@@ -74,6 +76,7 @@ namespace ServiceHub.Room.Service.Controllers
 
             if (room == null)
             {
+                logger.LogError("Room pulled from database cannot be converted to a room model", null);
                 return StatusCode(500);
             }
 
@@ -107,6 +110,7 @@ namespace ServiceHub.Room.Service.Controllers
 
             if (room == null)
             {
+                logger.LogError("Room pulled from database cannot be converted to a room model", null);
                 return StatusCode(500);
             }
 
@@ -154,6 +158,7 @@ namespace ServiceHub.Room.Service.Controllers
 
             if (item == null)
             {
+                logger.LogError("Room pulled from database cannot be converted to a room model", null);
                 return StatusCode(500);
             }
 
@@ -191,13 +196,15 @@ namespace ServiceHub.Room.Service.Controllers
                     {
                         await _context.UpdateAsync(newCtxItem);
                     }
-                    catch
+                    catch(Exception e)
                     {
+                        logger.LogError(e, "Room model cannot be update a room within the database", null);
                         return StatusCode(500);
                     }
                 }
                 else
                 {
+                    logger.LogError("Room in database trying to be updated cannot be found", null);
                     return StatusCode(500);
                 }
             }
@@ -266,8 +273,9 @@ namespace ServiceHub.Room.Service.Controllers
             {
                 await _context.DeleteAsync(id);
             }
-            catch
+            catch(Exception e)
             {
+                logger.LogError(e, "Room trying to be deleted from database could not be deleted.", null);
                 return StatusCode(500);
             }
 
