@@ -52,7 +52,7 @@ namespace ServiceHub.Room.Service.Controllers
         /// <param name="id">RoomId to search for.</param>
         /// <returns>A matching item if found, error otherwise.</returns>
         [HttpGet]
-        [Route("{id}")]
+        [Route("{id}", Name = "GetById")]
         public async Task<IActionResult> Get(Guid id)
         {
             if (id == Guid.Empty)
@@ -118,8 +118,8 @@ namespace ServiceHub.Room.Service.Controllers
             {
                 return BadRequest("Cannot insert duplicate record.");
             }
-
-            return CreatedAtRoute("Rooms", new {id = value.RoomId}, value);
+            
+            return CreatedAtRoute("GetById", new {id = value.RoomId}, value);
         }
 
         /// <summary>
