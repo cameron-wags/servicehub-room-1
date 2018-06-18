@@ -9,7 +9,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestAddressValidationAll()
         {
-            Address address = new Address();
+            var address = new Address();
             
             Assert.False(address.isValidState());
         }
@@ -17,7 +17,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestAddressValidationAddressId()
         {
-            Address address = new Address
+            var address = new Address
             {
                 Address1 = "1234 Test st.",
                 Address2 = "apt 303",
@@ -33,7 +33,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestAddressValidationAddress1()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 //Address1 = "1234 Test st.",
@@ -50,7 +50,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestAddressValidationAddress1ToLong()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "THIS STRING IS 256 CHARACTERS xxxxxxxxxxxxxxxxxxxxxxxxxxx" +
@@ -71,7 +71,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestAddressValidationAddress2()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -88,7 +88,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestAddressValidationAddress2ToLong()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -109,7 +109,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestAddressValidationCity()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -126,7 +126,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestAddressValidationState()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -143,7 +143,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestAddressValidationStateToLong()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -160,7 +160,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestAddressValidationStateToShort()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -177,7 +177,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestAddressValidationPostalCode()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -194,7 +194,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestAddressValidationPostalCodeToLong()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -211,7 +211,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestAddressValidationPostalCodeToShort()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -228,7 +228,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestAddressValidationCountry()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -245,7 +245,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestAddressValidationCountryToLong()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -262,7 +262,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestAddressValidationCountryToShort()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -279,7 +279,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestAddressValidationInvalidState()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",

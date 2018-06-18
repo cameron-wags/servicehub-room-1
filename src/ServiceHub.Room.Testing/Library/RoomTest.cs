@@ -9,7 +9,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestRoomValidationAll()
         {
-            Room.Library.Models.Room room = new Room.Library.Models.Room();
+            var room = new Room.Library.Models.Room();
             
             Assert.False(room.isValidState());
         }
@@ -17,7 +17,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestRoomValidationLocation()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -42,7 +42,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestRoomValidationPasses()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -85,7 +85,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestRoomValidationWithInvalidAddress()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 //Address1 = "1234 Test st.",
@@ -112,7 +112,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestRoomValidationWithInvalidAddress1()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -139,7 +139,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestRoomValidationVacancy()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -166,7 +166,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestRoomValidationVacancyGreaterThanOccupancy()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -193,7 +193,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestRoomValidationOccupancy()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -220,7 +220,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestRoomValidationOccupancyLessThanZero()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -247,7 +247,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestRoomValidationGender()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -274,7 +274,7 @@ namespace ServiceHub.Room.Testing.Library
         [Fact]
         public void TestRoomValidationLocationLimit()
         {
-            Address address = new Address
+            var address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",

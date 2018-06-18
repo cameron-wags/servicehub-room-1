@@ -157,7 +157,7 @@ namespace ServiceHub.Room.Testing.Service
         }
 
         [Fact]
-        public async Task TestGetByID()
+        public async Task TestGetById()
         {
             _context = new RoomRepositoryMemory();
 
