@@ -42,6 +42,7 @@ namespace ServiceHub.Room.Testing.Service
         [Fact]
         public void TestModelProperties()
         {
+
             var address1 = new Address
             {
                 AddressId = _address.AddressId,
@@ -65,6 +66,7 @@ namespace ServiceHub.Room.Testing.Service
 
             var obj1ToJSON =  room1.ToJson();
             var obj2ToJSON = _room.ToJson();
+
             Assert.Equal(obj1ToJSON,obj2ToJSON);
         }
 
@@ -72,6 +74,7 @@ namespace ServiceHub.Room.Testing.Service
         public async Task TestContextInsert()
         {
             _context = new RoomRepositoryMemory();
+
             var address = new Address
             {
                 AddressId = Guid.NewGuid(),
@@ -93,6 +96,7 @@ namespace ServiceHub.Room.Testing.Service
                 Gender = "M"
             };
 
+
             await _context.InsertAsync(room);
 
             Assert.Equal(room.RoomId, _context.GetAsync().Result.First().RoomId);
@@ -102,6 +106,7 @@ namespace ServiceHub.Room.Testing.Service
         public async Task TestGetAll()
         {
             _context = new RoomRepositoryMemory();
+
             var address = new Address
             {
                 AddressId = Guid.NewGuid(),
@@ -144,6 +149,7 @@ namespace ServiceHub.Room.Testing.Service
                 Gender = "M"
             };
 
+
             await _context.InsertAsync(room);
             await _context.InsertAsync(room1);
             var results = _context.GetAsync().Result;
@@ -154,6 +160,7 @@ namespace ServiceHub.Room.Testing.Service
         public async Task TestGetByID()
         {
             _context = new RoomRepositoryMemory();
+
             var address = new Address
             {
                 AddressId = Guid.NewGuid(),
@@ -174,6 +181,7 @@ namespace ServiceHub.Room.Testing.Service
                 Occupancy = 2,
                 Gender = "M"
             };
+
             await _context.InsertAsync(room);
             var result = _context.GetByIdAsync(room.RoomId).Result;
 
@@ -184,6 +192,7 @@ namespace ServiceHub.Room.Testing.Service
         public async Task TestUpdate()
         {
             _context = new RoomRepositoryMemory();
+
             var address = new Address
             {
                 AddressId = Guid.NewGuid(),
@@ -204,6 +213,7 @@ namespace ServiceHub.Room.Testing.Service
                 Occupancy = 2,
                 Gender = "M"
             };
+
             await _context.InsertAsync(room);
 
             room.Location = "Dallas";
@@ -236,6 +246,7 @@ namespace ServiceHub.Room.Testing.Service
                 Occupancy = 2,
                 Gender = "M"
             };
+
             await _context.InsertAsync(room);
             
             await _context.DeleteAsync(room.RoomId);
