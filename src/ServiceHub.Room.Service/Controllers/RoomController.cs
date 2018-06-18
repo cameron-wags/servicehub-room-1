@@ -12,11 +12,11 @@ namespace ServiceHub.Room.Service.Controllers
     [Route("api/Rooms")]
     public class RoomController : BaseController
     {
-        private readonly RoomContext _context;
+        private readonly IRoomsRepository _context;
 
         public RoomController(ILoggerFactory loggerFactory, IRoomsRepository repo) : base(loggerFactory)
         {
-            _context = new RoomContext(repo);
+            _context = repo;
         }
 
         /// <summary>
