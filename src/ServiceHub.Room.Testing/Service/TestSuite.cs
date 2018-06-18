@@ -11,12 +11,12 @@ namespace ServiceHub.Room.Testing.Service
 {
     public class TestSuite
     {
-        private RoomRepositoryMemory context;
-        private Address address;
-        private Room.Context.Models.Room room;
+        private RoomRepositoryMemory _context;
+        private readonly Address _address;
+        private readonly Room.Context.Models.Room _room;
         public TestSuite()
         {
-            address = address = new Address
+            _address = _address = new Address
             {
                 AddressId = Guid.NewGuid(),
                 Address1 = "1234 Test st.",
@@ -27,10 +27,10 @@ namespace ServiceHub.Room.Testing.Service
                 State = "Ca"
             };
 
-            room = new Room.Context.Models.Room
+            _room = new Room.Context.Models.Room
             {
                 RoomId = Guid.NewGuid(),
-                Address = address,
+                Address = _address,
                 Location = "Tampa",
                 Vacancy = 1,
                 Occupancy = 2,
@@ -42,32 +42,32 @@ namespace ServiceHub.Room.Testing.Service
         public void TestModelProperties()
         {
             Address address1 = new Address();
-            address1.AddressId = address.AddressId;
-            address1.Address1 = address1.Address1;
-            address1.Address2 = address.Address2;
-            address1.City = address.City;
-            address1.State = address1.State;
-            address1.Country = address.Country;
-            address1.PostalCode = address.PostalCode;
+            address1.AddressId = _address.AddressId;
+            address1.Address1 = _address.Address1;
+            address1.Address2 = _address.Address2;
+            address1.City = _address.City;
+            address1.State = _address.State;
+            address1.Country = _address.Country;
+            address1.PostalCode = _address.PostalCode;
 
             Room.Context.Models.Room room1 = new Room.Context.Models.Room();
-            room1.RoomId = room.RoomId;
-            room1.Address = room.Address;
-            room1.Location = room.Location;
-            room1.Occupancy = room.Occupancy;
-            room1.Vacancy = room.Vacancy;
-            room1.Gender = room.Gender;
+            room1.RoomId = _room.RoomId;
+            room1.Address = _room.Address;
+            room1.Location = _room.Location;
+            room1.Occupancy = _room.Occupancy;
+            room1.Vacancy = _room.Vacancy;
+            room1.Gender = _room.Gender;
 
            
-            var obj1ToJSON = room.ToJson();
-            var obj2ToJSON = room.ToJson();
+            var obj1ToJSON = _room.ToJson();
+            var obj2ToJSON = _room.ToJson();
             Assert.Equal(obj1ToJSON,obj2ToJSON);
         }
 
         [Fact]
         public void TestContextInsert()
         {
-            context = new RoomRepositoryMemory();
+            _context = new RoomRepositoryMemory();
             Address address = new Address
             {
                 AddressId = Guid.NewGuid(),
@@ -89,9 +89,9 @@ namespace ServiceHub.Room.Testing.Service
                 Gender = "M"
             };
 
-            context.Insert(room);
+            _context.Insert(room);
 
-            Assert.Equal(room.RoomId, context.Get()[0].RoomId);
+            Assert.Equal(room.RoomId, _context.Get()[0].RoomId);
         }
 
 
@@ -99,7 +99,7 @@ namespace ServiceHub.Room.Testing.Service
         [Fact]
         public void TestGetAll()
         {
-            context = new RoomRepositoryMemory();
+            _context = new RoomRepositoryMemory();
             List<Room.Context.Models.Room> results;
             Address address = new Address
             {
@@ -143,16 +143,16 @@ namespace ServiceHub.Room.Testing.Service
                 Gender = "M"
             };
 
-            context.Insert(room);
-            context.Insert(room1);
-            results = context.Get();
+            _context.Insert(room);
+            _context.Insert(room1);
+            results = _context.Get();
             Assert.Equal(2,results.Count);
         }
 
         [Fact]
         public void TestGetByID()
         {
-            context = new RoomRepositoryMemory();
+            _context = new RoomRepositoryMemory();
             Address address = new Address
             {
                 AddressId = Guid.NewGuid(),
@@ -173,8 +173,8 @@ namespace ServiceHub.Room.Testing.Service
                 Occupancy = 2,
                 Gender = "M"
             };
-            context.Insert(room);
-            Room.Context.Models.Room result = context.GetById(room.RoomId);
+            _context.Insert(room);
+            Room.Context.Models.Room result = _context.GetById(room.RoomId);
 
             Assert.Equal(room.RoomId,result.RoomId);
         }
@@ -182,7 +182,7 @@ namespace ServiceHub.Room.Testing.Service
         [Fact]
         public void TestUpdate()
         {
-            context = new RoomRepositoryMemory();
+            _context = new RoomRepositoryMemory();
             Address address = new Address
             {
                 AddressId = Guid.NewGuid(),
@@ -203,18 +203,18 @@ namespace ServiceHub.Room.Testing.Service
                 Occupancy = 2,
                 Gender = "M"
             };
-            context.Insert(room);
+            _context.Insert(room);
 
             room.Location = "Dallas";
-            context.Update(room);
+            _context.Update(room);
 
-            Assert.Equal("Dallas",context.GetById(room.RoomId).Location);
+            Assert.Equal("Dallas",_context.GetById(room.RoomId).Location);
         }
 
         [Fact]
         public void TestDelete()
         {
-            context = new RoomRepositoryMemory();
+            _context = new RoomRepositoryMemory();
             Address address = new Address
             {
                 AddressId = Guid.NewGuid(),
@@ -235,12 +235,12 @@ namespace ServiceHub.Room.Testing.Service
                 Occupancy = 2,
                 Gender = "M"
             };
-            context.Insert(room);
+            _context.Insert(room);
 
             //room.Vacancy = 0;
-            context.Delete(room.RoomId);
+            _context.Delete(room.RoomId);
 
-            Assert.Empty(context.roomList);
+            Assert.Empty(_context.roomList);
         }
     }
 }

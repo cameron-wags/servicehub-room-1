@@ -16,9 +16,9 @@ namespace ServiceHub.Room.Testing.Service
 {
     public class RoomControllerTest
     {
-        private Room.Library.Models.Address _address;
-        private Room.Library.Models.Room _room;
-        private RoomRepositoryMemory _context;
+        private readonly Room.Library.Models.Address _address;
+        private readonly Room.Library.Models.Room _room;
+        private readonly RoomRepositoryMemory _context;
 
         public RoomControllerTest()
         {
