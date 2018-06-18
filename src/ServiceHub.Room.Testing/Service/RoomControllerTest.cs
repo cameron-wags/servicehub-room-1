@@ -46,17 +46,12 @@ namespace ServiceHub.Room.Testing.Service
         public async Task TestControllerGet()
         {
             //Arrange
-<<<<<<< HEAD
+
             _room.Address = _address;
             Guid id = _room.RoomId;
-            _context.Insert(ModelMapper.LibraryToContext(_room));
+            await _context.InsertAsync(ModelMapper.LibraryToContext(_room));
             RoomController roomController = new RoomController(new LoggerFactory(), _context);
-=======
-            room.Address = address;
-            Guid id = room.RoomId;
-            await context.InsertAsync(ModelMapper.LibraryToContext(room));
-            RoomController roomController = new RoomController(new LoggerFactory(), context);
->>>>>>> origin/dev
+
 
             //Act
             var myTask = roomController.Get();
@@ -75,17 +70,12 @@ namespace ServiceHub.Room.Testing.Service
         public async Task TestControllerGetById()
         {
             //Arrange
-<<<<<<< HEAD
+
             _room.Address = _address;
             Guid id = _room.RoomId;
-            _context.Insert(ModelMapper.LibraryToContext(_room));
+            await _context.InsertAsync(ModelMapper.LibraryToContext(_room));
             RoomController roomController = new RoomController(new LoggerFactory(), _context);
-=======
-            room.Address = address;
-            Guid id = room.RoomId;
-            await context.InsertAsync(ModelMapper.LibraryToContext(room));
-            RoomController roomController = new RoomController(new LoggerFactory(), context);
->>>>>>> origin/dev
+
 
             var myTask = roomController.Get(id);
             var result = await myTask;
@@ -100,17 +90,11 @@ namespace ServiceHub.Room.Testing.Service
         public async Task TestControllerGetByIdWithInvalidArgument()
         {
             //Arrange
-<<<<<<< HEAD
+
             _room.Address = _address;
             Guid id = _room.RoomId;
-            _context.Insert(ModelMapper.LibraryToContext(_room));
+            await _context.InsertAsync(ModelMapper.LibraryToContext(_room));
             RoomController roomController = new RoomController(new LoggerFactory(), _context);
-=======
-            room.Address = address;
-            Guid id = room.RoomId;
-            await context.InsertAsync(ModelMapper.LibraryToContext(room));
-            RoomController roomController = new RoomController(new LoggerFactory(), context);
->>>>>>> origin/dev
 
             var myTask = roomController.Get(Guid.Empty);
             var result = await myTask;
@@ -131,11 +115,9 @@ namespace ServiceHub.Room.Testing.Service
             RoomController roomController = new RoomController(new LoggerFactory(), _context);
 
             //Act
-<<<<<<< HEAD
-            var myTask = Task.Run(() => roomController.Post(_room));
-=======
-            var myTask = roomController.Post(room);
->>>>>>> origin/dev
+
+            var myTask = roomController.Post(_room);
+
             var result = await myTask;
 
             var contentResult = result as CreatedAtRouteResult;
@@ -153,11 +135,9 @@ namespace ServiceHub.Room.Testing.Service
             _room.Location = null;
 
             //Act
-<<<<<<< HEAD
-            var myTask = Task.Run(() => roomController.Post(_room));
-=======
-            var myTask = roomController.Post(room);
->>>>>>> origin/dev
+
+            var myTask = roomController.Post(_room);
+
             var result = await myTask;
 
             var contentResult = result as BadRequestObjectResult;
@@ -171,21 +151,13 @@ namespace ServiceHub.Room.Testing.Service
         public async Task TestControllerPut()
         {
             //Arrange
-<<<<<<< HEAD
+
             RoomController roomController = new RoomController(new LoggerFactory(), _context);
             _room.Address = _address;
-            _context.Insert(ModelMapper.LibraryToContext(_room));
+            await _context.InsertAsync(ModelMapper.LibraryToContext(_room));
             _room.Location = "Dallas";
 
-            var myTask = Task.Run(() => roomController.Put(_room));
-=======
-            RoomController roomController = new RoomController(new LoggerFactory(), context);
-            room.Address = address;
-            await context.InsertAsync(ModelMapper.LibraryToContext(room));
-            room.Location = "Dallas";
-
-            var myTask = roomController.Put(room);
->>>>>>> origin/dev
+            var myTask = roomController.Put(_room);
             var result = await myTask;
 
             //var contentResult = result as StatusCodeResult;
@@ -193,11 +165,9 @@ namespace ServiceHub.Room.Testing.Service
             Assert.NotNull(contentResult);
             int code = (int)contentResult.StatusCode;
             Assert.InRange(code, 200, 299);
-<<<<<<< HEAD
-            Room.Context.Models.Room room1 = _context.GetById(_room.RoomId);
-=======
-            Room.Context.Models.Room room1 = context.GetByIdAsync(room.RoomId).Result;
->>>>>>> origin/dev
+
+            Room.Context.Models.Room room1 = _context.GetByIdAsync(_room.RoomId).Result;
+
             Assert.Equal("Dallas", room1.Location);
         }
 
@@ -205,32 +175,23 @@ namespace ServiceHub.Room.Testing.Service
         public async Task TestControllerPutWithTwoArguments()
         {
             //Arrange
-<<<<<<< HEAD
+
             RoomController roomController = new RoomController(new LoggerFactory(), _context);
             _room.Address = _address;
-            _context.Insert(ModelMapper.LibraryToContext(_room));
+            await _context.InsertAsync(ModelMapper.LibraryToContext(_room));
             _room.Location = "Dallas";
 
-            var myTask = Task.Run(() => roomController.Put(_room.RoomId,_room));
-=======
-            RoomController roomController = new RoomController(new LoggerFactory(), context);
-            room.Address = address;
-            await context.InsertAsync(ModelMapper.LibraryToContext(room));
-            room.Location = "Dallas";
+            var myTask = roomController.Put(_room.RoomId,_room);
 
-            var myTask = roomController.Put(room.RoomId,room);
->>>>>>> origin/dev
             var result = await myTask;
             
             var contentResult = result as NoContentResult;
             Assert.NotNull(contentResult);
             int code = (int)contentResult.StatusCode;
             Assert.InRange(code, 200, 299);
-<<<<<<< HEAD
-            Room.Context.Models.Room room1 = _context.GetById(_room.RoomId);
-=======
-            Room.Context.Models.Room room1 = context.GetByIdAsync(room.RoomId).Result;
->>>>>>> origin/dev
+
+            Room.Context.Models.Room room1 = _context.GetByIdAsync(_room.RoomId).Result;
+
             Assert.Equal("Dallas", room1.Location);
         }
 
@@ -243,11 +204,9 @@ namespace ServiceHub.Room.Testing.Service
             _room.RoomId = Guid.Empty;
 
             //Act
-<<<<<<< HEAD
-            var myTask = Task.Run(() => roomController.Put(_room));
-=======
-            var myTask = roomController.Put(room);
->>>>>>> origin/dev
+
+            var myTask = roomController.Put(_room);
+
             var result = await myTask;
             
             var contentResult = result as BadRequestObjectResult;
@@ -261,43 +220,33 @@ namespace ServiceHub.Room.Testing.Service
         public async Task TestControllerDelete()
         {
             //Arrange
-<<<<<<< HEAD
+
             RoomController roomController = new RoomController(new LoggerFactory(), _context);
             _room.Address = _address;
-            _context.Insert(ModelMapper.LibraryToContext(_room));
+            await _context.InsertAsync(ModelMapper.LibraryToContext(_room));
             
             Assert.NotEmpty(_context.roomList);
-            var myTask = Task.Run(() => roomController.Delete(_room.RoomId));
-=======
-            RoomController roomController = new RoomController(new LoggerFactory(), context);
-            room.Address = address;
-            await context.InsertAsync(ModelMapper.LibraryToContext(room));
-            
-            Assert.NotEmpty(context.roomList);
-            var myTask = roomController.Delete(room.RoomId);
->>>>>>> origin/dev
+            var myTask = roomController.Delete(_room.RoomId);
+
             var result = await myTask;
 
             var contentResult = result as StatusCodeResult;
             Assert.NotNull(contentResult);
             int code = (int)contentResult.StatusCode;            
-<<<<<<< HEAD
-            Assert.InRange(code, 200, 300);
-            Assert.Empty(_context.roomList);
-=======
+
             Assert.InRange(code, 200, 299);
-            Assert.Empty(context.roomList);
->>>>>>> origin/dev
+            Assert.Empty(_context.roomList);
+
         }
         [Fact]
         public async void TestControllerDeleteWithNullModel()
         {
             //Arrange
-            RoomController roomController = new RoomController(new LoggerFactory(), context);
-            room.Address = address;
-            await context.InsertAsync(ModelMapper.LibraryToContext(room));
+            RoomController roomController = new RoomController(new LoggerFactory(), _context);
+            _room.Address = _address;
+            await _context.InsertAsync(ModelMapper.LibraryToContext(_room));
 
-            Assert.NotEmpty(context.roomList);
+            Assert.NotEmpty(_context.roomList);
             var badId = Guid.Empty;
             var myTask = roomController.Delete(badId);
             var result = await myTask;
@@ -312,11 +261,11 @@ namespace ServiceHub.Room.Testing.Service
         public async void TestControllerDeleteWithModelNotInData()
         {
             //Arrange
-            RoomController roomController = new RoomController(new LoggerFactory(), context);
-            room.Address = address;
-            await context.InsertAsync(ModelMapper.LibraryToContext(room));
+            RoomController roomController = new RoomController(new LoggerFactory(), _context);
+            _room.Address = _address;
+            await _context.InsertAsync(ModelMapper.LibraryToContext(_room));
 
-            Assert.NotEmpty(context.roomList);
+            Assert.NotEmpty(_context.roomList);
             var badId = Guid.NewGuid();
             var myTask = roomController.Delete(badId);
             var result = await myTask;

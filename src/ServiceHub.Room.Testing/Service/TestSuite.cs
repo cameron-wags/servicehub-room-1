@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using MongoDB.Bson;
 using Xunit;
 using ServiceHub.Room.Context.Repository;
@@ -10,16 +11,11 @@ namespace ServiceHub.Room.Testing.Service
 {
     public class TestSuite
     {
-<<<<<<< HEAD
+
         private RoomRepositoryMemory _context;
         private readonly Address _address;
         private readonly Room.Context.Models.Room _room;
-=======
-        private RoomRepositoryMemory context;
-        private Address address;
-        private Room.Context.Models.Room room;
 
->>>>>>> origin/dev
         public TestSuite()
         {
             _address = _address = new Address
@@ -57,7 +53,7 @@ namespace ServiceHub.Room.Testing.Service
             address1.PostalCode = _address.PostalCode;
 
             Room.Context.Models.Room room1 = new Room.Context.Models.Room();
-<<<<<<< HEAD
+
             room1.RoomId = _room.RoomId;
             room1.Address = _room.Address;
             room1.Location = _room.Location;
@@ -68,22 +64,12 @@ namespace ServiceHub.Room.Testing.Service
            
             var obj1ToJSON = _room.ToJson();
             var obj2ToJSON = _room.ToJson();
-=======
-            room1.RoomId = room.RoomId;
-            room1.Address = room.Address;
-            room1.Location = room.Location;
-            room1.Occupancy = room.Occupancy;
-            room1.Vacancy = room.Vacancy;
-            room1.Gender = room.Gender;
-            
-            var obj1ToJSON = room.ToJson();
-            var obj2ToJSON = room.ToJson();
->>>>>>> origin/dev
+
             Assert.Equal(obj1ToJSON,obj2ToJSON);
         }
 
         [Fact]
-        public async void TestContextInsert()
+        public async Task TestContextInsert()
         {
             _context = new RoomRepositoryMemory();
             Address address = new Address
@@ -107,19 +93,14 @@ namespace ServiceHub.Room.Testing.Service
                 Gender = "M"
             };
 
-<<<<<<< HEAD
-            _context.Insert(room);
+            _context.InsertAsync(room);
 
-            Assert.Equal(room.RoomId, _context.Get()[0].RoomId);
-=======
-            await context.InsertAsync(room);
+            Assert.Equal(room.RoomId, _context.GetAsync().Result[0].RoomId);
 
-            Assert.Equal(room.RoomId, context.GetAsync().Result.First().RoomId);
->>>>>>> origin/dev
         }
         
         [Fact]
-        public async void TestGetAll()
+        public async Task TestGetAll()
         {
             _context = new RoomRepositoryMemory();
             List<Room.Context.Models.Room> results;
@@ -165,20 +146,16 @@ namespace ServiceHub.Room.Testing.Service
                 Gender = "M"
             };
 
-<<<<<<< HEAD
-            _context.Insert(room);
-            _context.Insert(room1);
-            results = _context.Get();
-=======
-            await context.InsertAsync(room);
-            await context.InsertAsync(room1);
-            results = context.GetAsync().Result;
->>>>>>> origin/dev
+
+            await _context.InsertAsync(room);
+            await _context.InsertAsync(room1);
+            results = _context.GetAsync().Result;
+
             Assert.Equal(2,results.Count);
         }
 
         [Fact]
-        public async void TestGetByID()
+        public async Task TestGetByID()
         {
             _context = new RoomRepositoryMemory();
             Address address = new Address
@@ -201,19 +178,16 @@ namespace ServiceHub.Room.Testing.Service
                 Occupancy = 2,
                 Gender = "M"
             };
-<<<<<<< HEAD
-            _context.Insert(room);
-            Room.Context.Models.Room result = _context.GetById(room.RoomId);
-=======
-            await context.InsertAsync(room);
-            Room.Context.Models.Room result = context.GetByIdAsync(room.RoomId).Result;
->>>>>>> origin/dev
+
+            await _context.InsertAsync(room);
+            Room.Context.Models.Room result = _context.GetByIdAsync(room.RoomId).Result;
+
 
             Assert.Equal(room.RoomId,result.RoomId);
         }
 
         [Fact]
-        public async void TestUpdate()
+        public async Task TestUpdate()
         {
             _context = new RoomRepositoryMemory();
             Address address = new Address
@@ -236,25 +210,18 @@ namespace ServiceHub.Room.Testing.Service
                 Occupancy = 2,
                 Gender = "M"
             };
-<<<<<<< HEAD
-            _context.Insert(room);
+
+            _context.InsertAsync(room);
 
             room.Location = "Dallas";
-            _context.Update(room);
+            _context.UpdateAsync(room);
 
-            Assert.Equal("Dallas",_context.GetById(room.RoomId).Location);
-=======
-            await context.InsertAsync(room);
+            Assert.Equal("Dallas",_context.GetByIdAsync(room.RoomId).Result.Location);
 
-            room.Location = "Dallas";
-            await context.UpdateAsync(room);
-
-            Assert.Equal("Dallas",context.GetByIdAsync(room.RoomId).Result.Location);
->>>>>>> origin/dev
         }
 
         [Fact]
-        public async void TestDelete()
+        public async Task TestDelete()
         {
             _context = new RoomRepositoryMemory();
             Address address = new Address
@@ -277,16 +244,10 @@ namespace ServiceHub.Room.Testing.Service
                 Occupancy = 2,
                 Gender = "M"
             };
-<<<<<<< HEAD
-            _context.Insert(room);
 
-            //room.Vacancy = 0;
-            _context.Delete(room.RoomId);
-=======
-            await context.InsertAsync(room);
+            await _context.InsertAsync(room);
             
-            await context.DeleteAsync(room.RoomId);
->>>>>>> origin/dev
+            await _context.DeleteAsync(room.RoomId);
 
             Assert.Empty(_context.roomList);
         }
