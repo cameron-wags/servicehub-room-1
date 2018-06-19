@@ -15,7 +15,7 @@ namespace ServiceHub.Room.Service
             using (var scope = building.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                SeedData.Initialize(services);
+                SeedData.InitializeAsync(services).Wait();
             }
 
             building.Run();

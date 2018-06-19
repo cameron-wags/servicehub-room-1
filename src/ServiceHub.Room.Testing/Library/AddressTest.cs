@@ -64,7 +64,7 @@ namespace ServiceHub.Room.Testing.Library
                 PostalCode = "92646",
                 State = "Ca"
             };
-            Assert.False(address.isValidState());
+            Assert.False(address.IsValidState());
         }
 
 
@@ -103,7 +103,7 @@ namespace ServiceHub.Room.Testing.Library
                 State = "Ca"
             };
 
-            Assert.False(address.isValidState());
+            Assert.False(address.IsValidState());
         }
 
         [Fact]
@@ -290,7 +290,7 @@ namespace ServiceHub.Room.Testing.Library
                 State = "CW"
             };
 
-            Assert.False(address.isValidState());
+            Assert.False(address.IsValidState());
         }
     }
 }
