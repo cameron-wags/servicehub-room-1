@@ -2,7 +2,7 @@
 
 namespace ServiceHub.Room.Service
 {
-    public class ServiceLogging
+    public static class ServiceLogging
     {
         private static ILoggerFactory _factory = null;
         private static string _category;
